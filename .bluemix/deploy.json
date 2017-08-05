@@ -1,0 +1,699 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "messages": {
+        "$i18n": "locales.yml"
+    },
+    "title": {
+        "$ref": "#/messages/deploy.title"
+    },
+    "description": {
+        "$ref": "#/messages/deploy.description"
+    },
+    "longDescription": {
+        "$ref": "#/messages/deploy.longDescription"
+    },
+    "type": "object",
+    "properties": {
+        "prod-region": {
+            "description": "The bluemix region",
+            "type": "string"
+        },
+        "prod-organization": {
+            "description": "The bluemix org",
+            "type": "string"
+        },
+        "prod-space": {
+            "description": "The bluemix space",
+            "type": "string"
+        },
+        "icon-domain": {
+            "description": "Domain to use for ICONR2 backend apps",
+            "type": "string"
+        },
+        "frontend-nginx-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "dhir-nginx-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "kibana-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "server-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "server-worker-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "clamav-app-name": {
+            "description": {
+                "$ref": "#/messages/deploy.appDescription"
+            },
+            "type": "string",
+            "pattern": "\\S"
+        },
+        "crypto-password": {
+            "description": "message encrtion token",
+            "type": "string"
+        },
+        "jwt-secret": {
+            "description": "jwt token",
+            "type": "string"
+        },
+        "endpoint_dictionary": {
+            "description": "dictionary service api endpoint(leave as default unless specified otherwise)",
+            "type": "string"
+        },
+        "endpoint_retrieval": {
+            "description": "retrieval api endpoint(leave as default unless specified otherwise)",
+            "type": "string"
+        },
+        "endpoint_retrieval_token": {
+            "description": "retrieval token",
+            "type": "string"
+        },
+        "endpoint_submission": {
+            "description": "submission api endpoint(leave as default unless specified otherwise)",
+            "type": "string"
+        },
+        "endpoint_submission_token": {
+            "description": "submission token",
+            "type": "string"
+        },
+        "postgres_readonly_role": {
+            "description": "postgres read only role",
+            "type": "string"
+        },
+        "tz": {
+            "description": "Timezone",
+            "type": "string"
+        },
+        "front_end_domain": {
+            "description": "ICONR2 front facing domain",
+            "type": "string"
+        },
+        "endpoint_pin_admin_token": {
+            "description": "admin endpoint token",
+            "type": "string"
+        },
+        "endpoint_pin_admin": {
+            "description": "admin endpoint",
+            "type": "string"
+        },
+        "PHUs": {
+            "title": "PHU Selection",
+            "name": "PHU",
+            "description": "Select PHUs to be made availiable",
+            "type": "string",
+            "enum": [
+                "Aug,1",
+                "Aug,11",
+                "Sept,1",
+                "Null"
+            ],
+            "value": "Aug,1"
+        },
+        "customPHUs": {
+            "description": "a list of PHU acronym seperated by commas.(e.g gbhu,rowph,xxsupportphu1,.....)",
+            "type": "string"
+        },
+        "frontend_mem": {
+            "type": "string",
+            "enum": [
+                "256MB",
+                "512MB",
+                "1024MB"
+            ],
+            "value": "256MB"
+        },
+        "frontend_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        },
+        "backend_mem": {
+            "type": "string",
+            "enum": [
+                "1024MB",
+                "2048MB"
+            ],
+            "value": "1024MB"
+        },
+        "backend_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        },
+        "backend_worker_mem": {
+            "type": "string",
+            "enum": [
+                "1024MB",
+                "2048MB"
+            ],
+            "value": "1024MB"
+        },
+        "backend_worker_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        },
+        "icon_clamav_mem": {
+            "type": "string",
+            "enum": [
+                "1024MB",
+                "2048MB"
+            ],
+            "value": "1024MB"
+        },
+        "icon_clamav_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        },
+        "dhir_nginx_mem": {
+            "type": "string",
+            "enum": [
+                "256MB",
+                "512MB",
+                "1024MB"
+            ],
+            "value": "256MB"
+        },
+        "dhir_nginx_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        },
+        "icon_kibana_mem": {
+            "type": "string",
+            "enum": [
+                "1024MB",
+                "2048MB"
+            ],
+            "value": "1024MB"
+        },
+        "icon_kibana_count": {
+            "type": "string",
+            "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
+            "value": "1"
+        }
+    },
+    "required": [
+        "prod-region",
+        "prod-organization",
+        "prod-space",
+        "frontend-nginx-app-name",
+        "dhir-nginx-app-name",
+        "kibana-app-name",
+        "server-app-name",
+        "server-worker-app-name",
+        "clamav-app-name",
+        "icon-domain",
+        "tz",
+        "postgres_readonly_role",
+        "endpoint_submission_token",
+        "endpoint_submission",
+        "endpoint_retrieval_token",
+        "endpoint_retrieval",
+        "endpoint_dictionary",
+        "jwt-secret",
+        "crypto-password",
+        "endpoint_pin_admin",
+        "endpoint_pin_admin_token",
+        "front_end_domain",
+        "customPHUs",
+        "PHUs",
+        "frontend_mem",
+        "frontend_count",
+        "backend_mem",
+        "backend_count",
+        "backend_worker_mem",
+        "backend_worker_count",
+        "icon_clamav_mem",
+        "icon_clamav_count",
+        "dhir_nginx_mem",
+        "dhir_nginx_count",
+        "icon_kibana_mem",
+        "icon_kibana_count"
+    ],
+    "form": [
+        {
+            "type": "validator",
+            "url": "/devops/setup/bm-helper/helper.html"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.crypto-password"
+            },
+            "key": "crypto-password"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.jwt-secret"
+            },
+            "key": "jwt-secret"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_retrieval_token"
+            },
+            "type": "text",
+            "key": "endpoint_retrieval_token"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_submission_token"
+            },
+            "type": "text",
+            "key": "endpoint_submission_token"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_pin_admin_token"
+            },
+            "type": "text",
+            "key": "endpoint_pin_admin_token"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.postgres_readonly_role"
+            },
+            "key": "postgres_readonly_role"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_retrieval"
+            },
+            "type": "text",
+            "key": "endpoint_retrieval"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_submission"
+            },
+            "type": "text",
+            "key": "endpoint_submission"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_pin_admin"
+            },
+            "type": "text",
+            "key": "endpoint_pin_admin"
+        },
+        {
+            "title": {
+                "$ref": "#/messages/deploy.endpoint_dictionary"
+            },
+            "type": "text",
+            "key": "endpoint_dictionary"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.tz"
+            },
+            "key": "tz"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/icon-domain"
+            },
+            "key": "icon-domain"
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.front_end_domain"
+            },
+            "key": "front_end_domain"
+        },
+        {
+            "type": "selectfieldset",
+            "key": "PHUs",
+            "titleMap": {
+                "Aug,1": "Aug,1st PHUs",
+                "Aug,11": "Aug,11th PHUs",
+                "Sept,1": "Sept,1st PHUs",
+                "Null": "Any PHUs"
+            },
+            "items": [
+                {
+                    "type": "section",
+                    "description": "PHUs on-boarded at Aug,1st (please refer to offical documentation for detail). Plus xxsupportphu1."
+                },
+                {
+                    "type": "section",
+                    "description": "PHUs on-boarded at Aug,11th (please refer to offical documentation for detail). Plus xxsupportphu1."
+                },
+                {
+                    "type": "section",
+                    "description": "PHUs on-boarded on Sept,1st (please refer to offical documentation for detail). Plus xxsupportphu1."
+                },
+                {
+                    "type": "section",
+                    "description": "Input your PHU acronyms below",
+                    "items": [
+                        {
+                            "type": "text",
+                            "key": "customPHUs",
+                            "title": {
+                                "$ref": "#/messages/deploy.customPHUs"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "columnCount": 3,
+            "widths": [
+                "55%",
+                "30%",
+                "15%"
+            ],
+            "items": [
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": "Memory"
+                },
+                {
+                    "type": "label",
+                    "title": "Instance"
+                },
+                
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.frontend-nginx"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "key": "frontend-nginx-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "frontend_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "frontend_count"
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.dhir-nginx"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "key": "dhir-nginx-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "dhir_nginx_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "dhir_nginx_count"
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.kibana"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "key": "kibana-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "icon_kibana_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "icon_kibana_count"
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.server"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "readonly": false,
+                    "key": "server-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "backend_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "backend_count"
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.server-worker"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "key": "server-worker-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "backend_worker_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "backend_worker_count"
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/deploy.appName.clamav"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "text",
+                    "key": "clamav-app-name"
+                },
+                {
+                    "type": "select",
+                    "key": "icon_clamav_mem"
+                },
+                {
+                    "type": "select",
+                    "key": "icon_clamav_count"
+                }
+            ]
+        },
+        {
+            "type": "table",
+            "columnCount": 4,
+            "widths": [
+                "15%",
+                "28%",
+                "28%",
+                "28%"
+            ],
+            "items": [
+                {
+                    "type": "label",
+                    "title": ""
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/region"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/organization"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/space"
+                    }
+                },
+                {
+                    "type": "label",
+                    "title": {
+                        "$ref": "#/messages/prodStage"
+                    }
+                },
+                {
+                    "type": "select",
+                    "key": "prod-region"
+                },
+                {
+                    "type": "select",
+                    "key": "prod-organization"
+                },
+                {
+                    "type": "select",
+                    "key": "prod-space",
+                    "readonly": false
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,87 @@
+---
+stages:
+- name: Build ICON Kibana
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+    enabled: false
+  properties:
+  - name: GET_CERT
+    type: text_area
+    value: ${GET_CERT}
+  jobs:
+  - name: Build
+    type: builder
+    build_type: shell
+    script: |-
+      #!/bin/bash
+      # get certificate script
+      echo "$GET_CERT" > getcert.sh
+- name: Deploy ICON Kibana
+  inputs:
+  - type: job
+    stage: Build ICON Kibana
+    job: Build
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash
+      # get certificate and push with app
+      source getcert.sh
+      getcert
+      cf push ${CF_APP} -f bluemix/base-manifest.yml -n ${CF_APP} -d ${ICON_DOMAIN} --no-start
+- name: Configure ICON Kibana
+  inputs:
+  - type: job
+    stage: Build ICON Kibana
+    job: Build
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: KIBANA_MEM
+    type: text
+    value: ${KIBANA_MEM}
+  - name: KIBANA_COUNT
+    type: text
+    value: ${KIBANA_COUNT}
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash
+      # check if certificate exists
+      source getcert.sh
+      getcert
+      if [ -f cert.pem ]
+      then
+        cf set-env ${CF_APP} NODE_EXTRA_CA_CERTS cert.pem
+      fi
+      cf scale -f -i ${KIBANA_COUNT} -m ${KIBANA_MEM} ${CF_APP}
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish

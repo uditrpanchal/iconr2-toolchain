@@ -1,0 +1,69 @@
+---
+stages:
+- name: Build dhir nginx
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+    enabled: false
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+- name: Deploy dhir nginx
+  inputs:
+  - type: job
+    stage: Build dhir nginx
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash
+      cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
+- name: Configure dhir nginx
+  inputs:
+  - type: job
+    stage: Build dhir nginx
+    job: Build
+    dir_name: null
+  properties:
+  - name: DHIR_NGINX_MEM
+    type: text
+    value: ${DHIR_NGINX_MEM}
+  - name: DHIR_NGINX_COUNT
+    type: text
+    value: ${DHIR_NGINX_COUNT}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash
+      cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish

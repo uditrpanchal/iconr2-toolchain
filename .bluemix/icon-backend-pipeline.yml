@@ -1,0 +1,186 @@
+---
+stages:
+- name: Build server and worker
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+    enabled: false
+  properties:
+  - name: GET_CERT
+    type: text_area
+    value: ${GET_CERT}
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+      echo "$GET_CERT" > getcert.sh
+- name: Deploy server
+  inputs:
+  - type: job
+    stage: Build server and worker
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  jobs:
+  - name: Deploy server
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME1}
+    script: |-
+      #!/bin/bash
+      # getting credential of elasticsearch
+      source getcert.sh
+      getcert
+      cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
+  - name: Deploy worker
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME2}
+    script: |-
+      #!/bin/bash
+      # getting credential of elasticsearch
+      source getcert.sh
+      getcert
+      cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
+- name: Configure server
+  inputs:
+  - type: job
+    stage: Build server and worker
+    job: Build
+    dir_name: null
+  properties:
+  - name: CRYPTO_PASSWORD
+    type: secure
+    value: ${CRYPTO_PASSWORD}
+  - name: JWT_TOKEN_SECRET_KEY
+    type: secure
+    value: ${JWT_TOKEN_SECRET_KEY}
+  - name: PHIX_ENDPOINT_DICTIONARY
+    type: text
+    value: ${PHIX_ENDPOINT_DICTIONARY}
+  - name: PHIX_ENDPOINT_RETRIEVAL
+    type: text
+    value: ${PHIX_ENDPOINT_RETRIEVAL}
+  - name: PHIX_ENDPOINT_RETRIEVAL_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+  - name: PHIX_ENDPOINT_SUBMISSION
+    type: text
+    value: ${PHIX_ENDPOINT_SUBMISSION}
+  - name: PHIX_ENDPOINT_SUBMISSION_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+  - name: PHIX_ENDPOINT_PIN_ADMIN
+    type: text
+    value: ${PHIX_ENDPOINT_PIN_ADMIN}
+  - name: PHIX_ENDPOINT_PIN_ADMIN_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+  - name: POSTGRES_READONLY_ROLE
+    type: text
+    value: ${POSTGRES_READONLY_ROLE}
+  - name: TZ
+    type: text
+    value: ${TZ}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${CF_APP_NAME1}
+    type: text
+  - name: WORKER_NAME
+    value: ${CF_APP_NAME2}
+    type: text
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: BACKEND_MEM
+    type: text
+    value: ${BACKEND_MEM}
+  - name: BACKEND_COUNT
+    type: text
+    value: ${BACKEND_COUNT}
+  - name: BACKEND_WORKER_MEM
+    type: text
+    value: ${BACKEND_WORKER_MEM}
+  - name: BACKEND_WORKER_COUNT
+    type: text
+    value: ${BACKEND_WORKER_COUNT}
+  jobs:
+  - name: Configure
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME1}
+    script: |-
+      #!/bin/bash
+      # Prepare configuration\
+      # GET CLAMAV endpoint
+      CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+      # GET DHIR NGINX ENDPOINT
+      DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+      # Check if certificate exist
+      source getcert.sh
+      getcert
+      #Setting env for server
+      cf set-env $SERVER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+      cf set-env $SERVER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+      cf set-env $SERVER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+      cf set-env $SERVER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+      cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+      cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+      cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+      cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+      cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+      cf set-env $SERVER_NAME TZ ${TZ}
+      cf set-env $SERVER_NAME SERVER_TYPE 1
+      if [ -f cert.pem ]
+      then
+        cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
+      fi      
+      cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
+      cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+      cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  $SERVER_NAME
+      # Setting env for server worker
+      cf set-env $WORKER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+      cf set-env $WORKER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+      cf set-env $WORKER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+      cf set-env $WORKER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+      cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+      cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+      cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+      cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+      cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+      cf set-env $WORKER_NAME TZ ${TZ}
+      cf set-env $WORKER_NAME SERVER_TYPE 2
+      if [ -f cert.pem ]
+      then
+        cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem
+      fi
+      cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} $WORKER_NAME
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish

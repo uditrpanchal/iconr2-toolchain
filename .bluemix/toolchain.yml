@@ -1,0 +1,274 @@
+version: 2
+template:
+  name: ICON r2 Development Toolchain Template
+  description: This Toolchain is for Developing ICON r2.  Each deployment is tagged.
+  info:
+    git url: '[https://github.com/Shifeng-ON/icon-deploy-two-domain](https://github.com/Shifeng-ON/icon-deploy-two-domain)'
+    git branch: '[dev](https://github.com/Shifeng-ON/icon-deploy-two-domain/tree/dev)'
+toolchain:
+  name: icon2-dev-toolchain-{{timestamp}}
+services:
+  icon-r2-init-setup-repo:
+    service_id: githubpublic
+    parameters:
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-init-setup.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-init-setup-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-init-setup-repo
+      name: 'icon-r2-init-setup-pipeline'
+      configuration:
+        content:
+          $ref: init-setup.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-init-setup-repo
+          CF_APP_NAME1: '{{form.pipeline.parameters.init-setup-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+    execute: false
+  icon-r2-clamav-repo:
+    service_id: githubpublic
+    parameters:
+      repo_name: '{{toolchain.name}}'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-clamav.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-clamav-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-clamav-repo
+      name: 'icon-r2-clamav-pipeline'
+      configuration:
+        content:
+          $ref: clamav-pipeline.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-clamav-repo
+          CF_APP_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          CLAMAV_MEM: '{{form.pipeline.parameters.icon_clamav_mem}}'
+          CLAMAV_COUNT: '{{form.pipeline.parameters.icon_clamav_count}}'
+      execute: false
+  icon-r2-frontend-nginx-repo:
+    service_id: githubpublic
+    parameters:
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-frontend-nginx.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-frontend-nginx-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-frontend-nginx-repo
+      name: 'icon-r2-frontend-nginx-pipeline'
+      configuration:
+        content:
+          $ref: frontend-nginx-pipeline.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-frontend-nginx-repo
+          CF_APP_NAME: '{{form.pipeline.parameters.frontend-nginx-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          ICON_SERVER_NAME: '{{form.pipeline.parameters.server-app-name}}'
+          PHU_SELECT: '{{form.pipeline.parameters.PHUs}}'
+          CUSTOM_PHU: '{{form.pipeline.parameters.customPHUs}}'
+          FRONT_END_DOMAIN: '{{form.pipeline.parameters.front_end_domain}} '
+          PHUs: '{{form.pipeline.parameters.PHUs}}'
+          FRONTEND_MEM: '{{form.pipeline.parameters.frontend_mem}}'
+          FRONTEND_COUNT: '{{form.pipeline.parameters.frontend_count}}'
+      execute: false
+  icon-r2-dhir-nginx-repo:
+    service_id: githubpublic
+    parameters:
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-dhir-nginx.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-dhir-nginx-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-dhir-nginx-repo
+      name: 'icon-r2-dhir-nginx-pipeline'
+      configuration:
+        content:
+          $ref: dhir-nginx-pipeline.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-dhir-nginx-repo
+          CF_APP_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          DHIR_NGINX_MEM: '{{form.pipeline.parameters.dhir_nginx_mem}}'
+          DHIR_NGINX_COUNT: '{{form.pipeline.parameters.dhir_nginx_count}}'
+      execute: false
+  icon-r2-kibana-repo:
+    service_id: githubpublic
+    parameters:
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-kibana.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-kibana-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-kibana-repo
+      name: 'icon-r2-kibana-pipeline'
+      configuration:
+        content:
+          $ref: kibana-pipeline.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-kibana-repo
+          CF_APP_NAME: '{{form.pipeline.parameters.kibana-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          GET_CERT: '{{form.pipeline.scripts.get-cert}}'
+          KIBANA_MEM: '{{form.pipeline.parameters.icon_kibana_mem}}'
+          KIBANA_COUNT: '{{form.pipeline.parameters.icon_kibana_count}} '
+      execute: false
+  icon-r2-server-repo:
+    service_id: githubpublic
+    parameters:
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-backend.git'
+      type: link
+      has_issues: false
+      enable_traceability: false
+  icon-r2-server-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-server-repo
+      name: 'icon-r2-backend-pipeline'
+      configuration:
+        content:
+          $ref: icon-backend-pipeline.yml
+          $refType: text
+        env:
+          SAMPLE_REPO: icon-r2-server-repo
+          CF_APP_NAME1: '{{form.pipeline.parameters.server-app-name}}'
+          CF_APP_NAME2: '{{form.pipeline.parameters.server-worker-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          CLAMAV_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
+          DHIR_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
+          CRYPTO_PASSWORD: '{{form.pipeline.parameters.crypto-password}}'
+          JWT_TOKEN_SECRET_KEY: '{{form.pipeline.parameters.jwt-secret}}'
+          PHIX_ENDPOINT_DICTIONARY: '{{form.pipeline.parameters.endpoint_dictionary}}'
+          PHIX_ENDPOINT_RETRIEVAL: '{{form.pipeline.parameters.endpoint_retrieval}}'
+          PHIX_ENDPOINT_RETRIEVAL_TOKEN: '{{form.pipeline.parameters.endpoint_retrieval_token}}'
+          PHIX_ENDPOINT_SUBMISSION: '{{form.pipeline.parameters.endpoint_submission}}'
+          PHIX_ENDPOINT_SUBMISSION_TOKEN: '{{form.pipeline.parameters.endpoint_submission_token}}'
+          PHIX_ENDPOINT_PIN_ADMIN: '{{form.pipeline.parameters.endpoint_pin_admin}}'
+          PHIX_ENDPOINT_PIN_ADMIN_TOKEN: '{{form.pipeline.parameters.endpoint_pin_admin_token}}'
+          POSTGRES_READONLY_ROLE: '{{form.pipeline.parameters.postgres_readonly_role}}'
+          TZ: '{{form.pipeline.parameters.tz}}'
+          GET_CERT: '{{form.pipeline.scripts.get-cert}}'
+          BACKEND_MEM: '{{form.pipeline.parameters.backend_mem}}'
+          BACKEND_COUNT: '{{form.pipeline.parameters.backend_count}}'
+          BACKEND_WORKER_MEM: '{{form.pipeline.parameters.backend_worker_mem}}'
+          BACKEND_WORKER_COUNT: '{{form.pipeline.parameters.backend_worker_count}}'
+    execute: false
+form:
+  pipeline:
+    scripts:
+      get-cert: |-
+        #!/bin/bash
+        getcert(){
+          set +e
+          cert=\$(cf service-key icon-elasticsearch Credential1 | grep ca_certificate_base64 | cut -d ':' -f 2 | tr -d "\\", \\n"  | base64 --decode)
+          if [ ! -z "\$cert" ]
+          then
+            echo \$cert > cert.pem
+          fi
+          set -e 
+        }
+      blue-green: |-
+        #!/bin/bash
+        echo "Getting options"
+        OPTIONS=
+        for i in \$*
+        do
+          OPTIONS="\${OPTIONS} \${i}"
+        done
+
+        echo "Blue Green Deployment"
+
+        if ! cf app \$CF_APP; then  
+          cf push \$CF_APP \${OPTIONS}
+        else
+          OLD_CF_APP=\${CF_APP}-OLD-$(date +"%s")
+          rollback() {
+            set +e  
+            if cf app \$OLD_CF_APP; then
+              cf logs \$CF_APP --recent
+              cf delete \$CF_APP -f
+              cf rename \$OLD_CF_APP \$CF_APP
+            fi
+            exit 1
+          }
+          set -e
+          trap rollback ERR
+          cf rename \$CF_APP \$OLD_CF_APP
+          cf push \$CF_APP \${OPTIONS}
+          cf delete \$OLD_CF_APP -f
+        fi
+    parameters:
+      server-app-name: 'icon-server'
+      server-worker-app-name: 'icon-server-worker'
+      frontend-nginx-app-name: 'icon-nginx'
+      dhir-nginx-app-name: 'dhir-nginx'
+      kibana-app-name: 'icon-kibana'
+      clamav-app-name: 'icon-clamav'
+      icon-domain: 'ehealthontario.ca-east.mybluemix.net'
+      crypto-password: '<password>'
+      jwt-secret: '<JWT Token>'
+      endpoint_dictionary: '/API/FHIR/Immunizations/v2/Dictionary?domain='
+      endpoint_retrieval: '/API/FHIR/Immunizations/v2/Immunization'
+      endpoint_retrieval_token: '<retrieval token>'
+      endpoint_submission: '/API/FHIR/Immunizations/v2/Communication'
+      endpoint_submission_token: '<submission token>'
+      endpoint_pin_admin: '/API/FHIR/Immunizations/v2/Admin/'
+      endpoint_pin_admin_token: '<pin admin token>'
+      postgres_readonly_role: 'readonly:WERJFIRWJWNEDJASDF'
+      front_end_domain: ''
+      tz: 'America/Toronto'
+      PHUs: 'Aug,1st'
+      customPHUs: ''
+      frontend_mem: '256MB'
+      frontend_count: '1'
+      backend_mem: '1024MB'
+      backend_count: '1'
+      backend_worker_mem: '1024MB'
+      backend_worker_count: '1'
+      icon_clamav_mem: '1024MB'
+      icon_clamav_count: '1'
+      dhir_nginx_mem: '256MB'
+      dhir_nginx_count: '1'
+      icon_kibana_mem: '1024MB'
+      icon_kibana_count: '1'
+      init-setup-app-name: 'icon-r2-init-setup'
+    schema:
+      $ref: deploy.json

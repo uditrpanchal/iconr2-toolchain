@@ -1,0 +1,109 @@
+---
+stages:
+- name: Build ICONR2 UI
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+    enabled: false
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+- name: Deploy ICONR2 UI
+  inputs:
+  - type: job
+    stage: Build ICONR2 UI
+    job: Build
+    dir_name: null
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash    
+      cf push ${CF_APP}  -f bluemix/base-manifest.yml --no-start --no-route
+- name: Configure ICONR2 UI
+  inputs:
+  - type: job
+    stage: Build ICONR2 UI
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: ICON_SERVER_NAME
+    type: text
+    value: ${ICON_SERVER_NAME}
+  - name: PHU_SELECT
+    type: text
+    value: ${PHU_SELECT}
+  - name: FRONT_END_DOMAIN
+    type: text
+    value: ${FRONT_END_DOMAIN}
+  - name: CUSTOM_PHU
+    type: text
+    value: ${CUSTOM_PHU}
+  - name: FRONTEND_MEM
+    type: text
+    value: ${FRONTEND_MEM}
+  - name: FRONTEND_COUNT
+    type: text
+    value: ${FRONTEND_COUNT}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash    
+     
+      PHUs=
+      if [ -z ${PHU_SELECT} ]
+      then
+        PHUs=${CUSTOM_PHU}
+      else
+        if [ ${PHU_SELECT} = "Aug,1" ]
+        then
+          PHUs='rowph,xxsupportphu1' 
+        elif [ ${PHU_SELECT} = "Aug,11" ]
+        then
+          PHUs='ckphu,gbhu,hnhu,hph,kfla,lph,mlhu,nwhu,pcchu,sdhu,timhu,tph,hpechu,ocph,peel,pdhu,tbdhu,rowph,xxsupportphu1' 
+        elif [ ${PHU_SELECT} = "Sept,1" ]
+        then
+          PHUs='xxsupportphu1' 
+        else
+          PHUs=${CUSTOM_PHU}
+        fi
+      fi
+
+      for i in $(echo $PHUs | tr ',' ' ')
+      do
+        cf map-route ${CF_APP} ${FRONT_END_DOMAIN} --hostname $i
+      done
+      
+      cf set-env ${CF_APP} ICON_SERVER https://${ICON_SERVER_NAME}.${ICON_DOMAIN}
+      
+      cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish

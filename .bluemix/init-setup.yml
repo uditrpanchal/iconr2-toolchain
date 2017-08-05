@@ -1,0 +1,83 @@
+---
+stages:
+- name: Setup scripts
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+    enabled: false
+  jobs:
+  - name: Create Elastic search service
+    type: deployer
+    fail_stage: false
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME1}
+    script: |
+      #!/bin/sh
+
+      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm i child_process
+
+      node scripts/one-time-setup.js compose-elasticsearch-dedicated icon-elasticsearch Credential1
+  - name: Create PostgreSQL service
+    type: deployer
+    fail_stage: false
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME1}
+    script: |
+      #!/bin/sh
+
+      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm i child_process
+
+      node scripts/one-time-setup.js compose-postgresql-dedicated icon-postgresql Credential1
+  - name: Create Rabbit-MQ service
+    type: deployer
+    fail_stage: false
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME1}
+    script: |
+      #!/bin/sh
+
+      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm i child_process
+
+      node scripts/one-time-setup.js compose-rabbitmq-dedicated icon-rabbitmq Credential1
+- name: Deploy PSQL
+  inputs:
+  - service: ${SAMPLE_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: populate_psql
+    script: |-
+      #!/bin/bash
+      PATH=$(pwd)/pgsql/bin:$PATH
+
+      ./scripts/exec_psql.sh icon-postgresql Credential1
+hooks:
+- enabled: true
+  label: null
+  ssl_enabled: false
+  url: https://devops-api.ng.bluemix.net/v1/messaging/webhook/publish
