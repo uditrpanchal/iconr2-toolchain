@@ -23,32 +23,15 @@ stages:
   - name: ICON_DOMAIN
     type: text
     value: ${ICON_DOMAIN}
-  triggers:
-  - type: stage
-  jobs:
-  - name: Deploy
-    type: deployer
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME}
-    script: |-
-      #!/bin/bash
-      cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
-- name: Configure dhir nginx
-  inputs:
-  - type: job
-    stage: Build dhir nginx
-    job: Build
-    dir_name: null
-  properties:
   - name: DHIR_NGINX_MEM
     type: text
     value: ${DHIR_NGINX_MEM}
   - name: DHIR_NGINX_COUNT
     type: text
     value: ${DHIR_NGINX_COUNT}
+  - name: BLUE_GREEN
+    type: texst
+    value: ${BLUE_GREEN}
   triggers:
   - type: stage
   jobs:
@@ -61,7 +44,18 @@ stages:
       application: ${CF_APP_NAME}
     script: |-
       #!/bin/bash
-      cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
+      # setup deploy function
+      deploy(){
+        cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
+        cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
+      }
+      # get bluegreen script, which makes use of deploy
+      echo "$BLUE_GREEN" > bg.sh
+      chmod +x bg.sh
+
+      # run the deployment
+      ./bg.sh
+     
 hooks:
 - enabled: true
   label: null
