@@ -30,7 +30,7 @@ stages:
     type: text
     value: ${DHIR_NGINX_COUNT}
   - name: BLUE_GREEN
-    type: text
+    type: text_area
     value: ${BLUE_GREEN}
   triggers:
   - type: stage
