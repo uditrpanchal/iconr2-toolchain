@@ -30,7 +30,7 @@ stages:
     type: text
     value: ${DHIR_NGINX_COUNT}
   - name: BLUE_GREEN
-    type: texst
+    type: text
     value: ${BLUE_GREEN}
   triggers:
   - type: stage
@@ -55,7 +55,6 @@ stages:
 
       # run the deployment
       ./bg.sh
-     
 hooks:
 - enabled: true
   label: null
