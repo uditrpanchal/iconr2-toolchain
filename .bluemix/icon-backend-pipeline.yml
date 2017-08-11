@@ -13,6 +13,9 @@ stages:
   - name: GET_CERT
     type: text_area
     value: ${GET_CERT}
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
   jobs:
   - name: Build
     type: builder
@@ -21,44 +24,9 @@ stages:
     script: |
       #!/bin/bash
       echo "$GET_CERT" > getcert.sh
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
 - name: Deploy server
-  inputs:
-  - type: job
-    stage: Build server and worker
-    job: Build
-    dir_name: null
-  properties:
-  - name: ICON_DOMAIN
-    type: text
-    value: ${ICON_DOMAIN}
-  jobs:
-  - name: Deploy server
-    type: deployer
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME1}
-    script: |-
-      #!/bin/bash
-      # getting credential of elasticsearch
-      source getcert.sh
-      getcert
-      cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
-  - name: Deploy worker
-    type: deployer
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME2}
-    script: |-
-      #!/bin/bash
-      # getting credential of elasticsearch
-      source getcert.sh
-      getcert
-      cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
-- name: Configure server
   inputs:
   - type: job
     stage: Build server and worker
@@ -125,8 +93,11 @@ stages:
   - name: BACKEND_WORKER_COUNT
     type: text
     value: ${BACKEND_WORKER_COUNT}
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
   jobs:
-  - name: Configure
+  - name: Deploy server
     type: deployer
     target:
       region_id: ${PROD_REGION_ID}
@@ -135,50 +106,81 @@ stages:
       application: ${CF_APP_NAME1}
     script: |-
       #!/bin/bash
-      # Prepare configuration\
-      # GET CLAMAV endpoint
-      CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
-      # GET DHIR NGINX ENDPOINT
-      DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
-      # Check if certificate exist
-      source getcert.sh
-      getcert
-      #Setting env for server
-      cf set-env $SERVER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
-      cf set-env $SERVER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
-      cf set-env $SERVER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
-      cf set-env $SERVER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
-      cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
-      cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
-      cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
-      cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
-      cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
-      cf set-env $SERVER_NAME TZ ${TZ}
-      cf set-env $SERVER_NAME SERVER_TYPE 1
-      if [ -f cert.pem ]
-      then
-        cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
-      fi      
-      cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
-      cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
-      cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  $SERVER_NAME
-      # Setting env for server worker
-      cf set-env $WORKER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
-      cf set-env $WORKER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
-      cf set-env $WORKER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
-      cf set-env $WORKER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
-      cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
-      cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
-      cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
-      cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
-      cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
-      cf set-env $WORKER_NAME TZ ${TZ}
-      cf set-env $WORKER_NAME SERVER_TYPE 2
-      if [ -f cert.pem ]
-      then
-        cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem
-      fi
-      cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} $WORKER_NAME
+      # getting credential of elasticsearch
+      deploy(){
+        source getcert.sh
+        getcert
+        cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
+        # Prepare configuration\
+        # GET CLAMAV endpoint
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        # GET DHIR NGINX ENDPOINT
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        #Setting env for server
+        cf set-env $SERVER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env $SERVER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env $SERVER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env $SERVER_NAME TZ ${TZ}
+        cf set-env $SERVER_NAME SERVER_TYPE 1
+        if [ -f cert.pem ]
+        then
+          cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
+        fi      
+        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
+        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+        cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  $SERVER_NAME
+      }
+      
+      export -f deploy
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+  - name: Deploy worker
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME2}
+    script: |-
+      #!/bin/bash
+      # getting credential of elasticsearch
+      deploy(){
+        source getcert.sh
+        getcert
+        cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
+        # GET CLAMAV endpoint
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        # GET DHIR NGINX ENDPOINT
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        # Setting env for server worker
+        cf set-env $WORKER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env $WORKER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env $WORKER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env $WORKER_NAME TZ ${TZ}
+        cf set-env $WORKER_NAME SERVER_TYPE 2
+        if [ -f cert.pem ]
+        then
+          cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem
+        fi
+        cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} $WORKER_NAME
+      }
+      export -f deploy
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
 hooks:
 - enabled: true
   label: null

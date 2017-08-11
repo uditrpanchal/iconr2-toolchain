@@ -59,6 +59,7 @@ services:
           ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
           CLAMAV_MEM: '{{form.pipeline.parameters.icon_clamav_mem}}'
           CLAMAV_COUNT: '{{form.pipeline.parameters.icon_clamav_count}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-frontend-nginx-repo:
     service_id: githubpublic
@@ -91,6 +92,7 @@ services:
           PHUs: '{{form.pipeline.parameters.PHUs}}'
           FRONTEND_MEM: '{{form.pipeline.parameters.frontend_mem}}'
           FRONTEND_COUNT: '{{form.pipeline.parameters.frontend_count}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-dhir-nginx-repo:
     service_id: githubpublic
@@ -146,7 +148,8 @@ services:
           ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
           GET_CERT: '{{form.pipeline.scripts.get-cert}}'
           KIBANA_MEM: '{{form.pipeline.parameters.icon_kibana_mem}}'
-          KIBANA_COUNT: '{{form.pipeline.parameters.icon_kibana_count}} '
+          KIBANA_COUNT: '{{form.pipeline.parameters.icon_kibana_count}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-server-repo:
     service_id: githubpublic
@@ -191,6 +194,7 @@ services:
           BACKEND_COUNT: '{{form.pipeline.parameters.backend_count}}'
           BACKEND_WORKER_MEM: '{{form.pipeline.parameters.backend_worker_mem}}'
           BACKEND_WORKER_COUNT: '{{form.pipeline.parameters.backend_worker_count}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
     execute: false
 form:
   pipeline:

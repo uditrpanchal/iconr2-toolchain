@@ -9,31 +9,20 @@ stages:
   triggers:
   - type: stage
     enabled: false
+  properties:
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
   jobs:
   - name: Build
     type: builder
     artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
 - name: Deploy ICONR2 UI
-  inputs:
-  - type: job
-    stage: Build ICONR2 UI
-    job: Build
-    dir_name: null
-  triggers:
-  - type: stage
-  jobs:
-  - name: Deploy
-    type: deployer
-    target:
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME}
-    script: |-
-      #!/bin/bash    
-      cf push ${CF_APP}  -f bluemix/base-manifest.yml --no-start --no-route
-- name: Configure ICONR2 UI
   inputs:
   - type: job
     stage: Build ICONR2 UI
@@ -74,34 +63,42 @@ stages:
       application: ${CF_APP_NAME}
     script: |-
       #!/bin/bash    
-     
-      PHUs=
-      if [ -z ${PHU_SELECT} ]
-      then
-        PHUs=${CUSTOM_PHU}
-      else
-        if [ ${PHU_SELECT} = "Aug,1" ]
-        then
-          PHUs='rowph,xxsupportphu1' 
-        elif [ ${PHU_SELECT} = "Aug,11" ]
-        then
-          PHUs='ckphu,gbhu,hnhu,hph,kfla,lph,mlhu,nwhu,pcchu,sdhu,timhu,tph,hpechu,ocph,peel,pdhu,tbdhu,rowph,xxsupportphu1' 
-        elif [ ${PHU_SELECT} = "Sept,1" ]
-        then
-          PHUs='xxsupportphu1' 
-        else
-          PHUs=${CUSTOM_PHU}
-        fi
-      fi
+      deploy(){
+        cf push ${CF_APP}  -f bluemix/base-manifest.yml --no-start --no-route
 
-      for i in $(echo $PHUs | tr ',' ' ')
-      do
-        cf map-route ${CF_APP} ${FRONT_END_DOMAIN} --hostname $i
-      done
+        PHUs=
+        if [ -z ${PHU_SELECT} ]
+        then
+          PHUs=${CUSTOM_PHU}
+        else
+          if [ ${PHU_SELECT} = "Aug,1" ]
+          then
+            PHUs='rowph,xxsupportphu1' 
+          elif [ ${PHU_SELECT} = "Aug,11" ]
+          then
+            PHUs='ckphu,gbhu,hnhu,hph,kfla,lph,mlhu,nwhu,pcchu,sdhu,timhu,tph,hpechu,ocph,peel,pdhu,tbdhu,rowph,xxsupportphu1' 
+          elif [ ${PHU_SELECT} = "Sept,1" ]
+          then
+            PHUs='xxsupportphu1' 
+          else
+            PHUs=${CUSTOM_PHU}
+          fi
+        fi
+
+        for i in $(echo $PHUs | tr ',' ' ')
+        do
+          cf map-route ${CF_APP} ${FRONT_END_DOMAIN} --hostname $i
+        done
       
-      cf set-env ${CF_APP} ICON_SERVER https://${ICON_SERVER_NAME}.${ICON_DOMAIN}
+        cf set-env ${CF_APP} ICON_SERVER https://${ICON_SERVER_NAME}.${ICON_DOMAIN}
       
-      cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}
+        cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}
+      }
+      export -f deploy
+
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
 hooks:
 - enabled: true
   label: null

@@ -9,10 +9,19 @@ stages:
   triggers:
   - type: stage
     enabled: false
+  properties:
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
   jobs:
   - name: Build
     type: builder
     artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
 - name: Deploy dhir nginx
   inputs:
   - type: job
@@ -29,9 +38,6 @@ stages:
   - name: DHIR_NGINX_COUNT
     type: text
     value: ${DHIR_NGINX_COUNT}
-  - name: BLUE_GREEN
-    type: text_area
-    value: ${BLUE_GREEN}
   triggers:
   - type: stage
   jobs:
@@ -49,11 +55,10 @@ stages:
         cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
         cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
       }
-      # get bluegreen script, which makes use of deploy
-      echo "$BLUE_GREEN" > bg.sh
-      chmod +x bg.sh
-
+      export -f deploy
+      
       # run the deployment
+      chmod +x bg.sh
       ./bg.sh
 hooks:
 - enabled: true

@@ -13,6 +13,9 @@ stages:
   - name: GET_CERT
     type: text_area
     value: ${GET_CERT}
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
   jobs:
   - name: Build
     type: builder
@@ -21,6 +24,7 @@ stages:
       #!/bin/bash
       # get certificate script
       echo "$GET_CERT" > getcert.sh
+      echo "$BLUE_GREEN" > bg.sh
 - name: Deploy ICON Kibana
   inputs:
   - type: job
@@ -33,29 +37,6 @@ stages:
   - name: ICON_DOMAIN
     type: text
     value: ${ICON_DOMAIN}
-  jobs:
-  - name: Deploy
-    type: deployer
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME}
-    script: |-
-      #!/bin/bash
-      # get certificate and push with app
-      source getcert.sh
-      getcert
-      cf push ${CF_APP} -f bluemix/base-manifest.yml -n ${CF_APP} -d ${ICON_DOMAIN} --no-start
-- name: Configure ICON Kibana
-  inputs:
-  - type: job
-    stage: Build ICON Kibana
-    job: Build
-    dir_name: null
-  triggers:
-  - type: stage
-  properties:
   - name: KIBANA_MEM
     type: text
     value: ${KIBANA_MEM}
@@ -72,14 +53,23 @@ stages:
       application: ${CF_APP_NAME}
     script: |-
       #!/bin/bash
-      # check if certificate exists
-      source getcert.sh
-      getcert
-      if [ -f cert.pem ]
-      then
-        cf set-env ${CF_APP} NODE_EXTRA_CA_CERTS cert.pem
-      fi
-      cf scale -f -i ${KIBANA_COUNT} -m ${KIBANA_MEM} ${CF_APP}
+      # get certificate and push with app
+      deploy(){
+        source getcert.sh
+        getcert
+        cf push ${CF_APP} -f bluemix/base-manifest.yml -n ${CF_APP} -d ${ICON_DOMAIN} --no-start
+        # check if certificate exists
+        if [ -f cert.pem ]
+        then
+          cf set-env ${CF_APP} NODE_EXTRA_CA_CERTS cert.pem
+        fi
+        cf scale -f -i ${KIBANA_COUNT} -m ${KIBANA_MEM} ${CF_APP}
+      }
+
+      export -f deploy
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
 hooks:
 - enabled: true
   label: null
