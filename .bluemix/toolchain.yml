@@ -217,7 +217,7 @@ form:
         if ! cf app \$CF_APP; then  
           deploy
         else
-          OLD_CF_APP=\${CF_APP}-OLD-$(date +"%s")
+          OLD_CF_APP=\${CF_APP}-OLD
           rollback() {
             set +e  
             if cf app \$OLD_CF_APP; then
@@ -231,7 +231,7 @@ form:
           trap rollback ERR
           cf rename \$CF_APP \$OLD_CF_APP
           deploy
-          cf delete \$OLD_CF_APP -f
+          cf stop \$OLD_CF_APP
         fi
     parameters:
       server-app-name: 'icon-server'
