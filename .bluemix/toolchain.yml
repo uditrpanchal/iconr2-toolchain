@@ -229,7 +229,6 @@ services:
           PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
           PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
           ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
-          CLAMAV_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
           DHIR_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
           CRYPTO_PASSWORD: '{{form.pipeline.parameters.crypto-password}}'
           JWT_TOKEN_SECRET_KEY: '{{form.pipeline.parameters.jwt-secret}}'
