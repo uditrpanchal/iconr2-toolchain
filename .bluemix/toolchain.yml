@@ -219,7 +219,7 @@ services:
           DHIR_NGINX_REPO: icon-r2-dhir-nginx-repo
           FRONTEND_REPO: icon-r2-frontend-nginx-repo
           ICON_KIBANA_REPO: icon-r2-kibana-repo
-          SERVER_NAME: '{{form.pipeline.parameters.server-app-name}}'
+          SERVER_NAME: '{{form.pipeline.parameters.server-app-name}}-{{form.pipeline.parameters.prod-space}}'
           WORKER_NAME: '{{form.pipeline.parameters.server-worker-app-name}}'
           KIBANA_NAME: '{{form.pipeline.parameters.kibana-app-name}}'
           DHIR_NGINX_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
