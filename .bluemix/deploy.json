@@ -282,6 +282,8 @@
             "value": "1"
         },
         "backend_env": {
+            "title": "Backend service connection",
+            "description": "Select where should ICONR2 point to",
             "type": "string",
             "enum": [
                 "UAT",

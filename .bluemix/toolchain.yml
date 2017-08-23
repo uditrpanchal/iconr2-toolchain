@@ -197,6 +197,70 @@ services:
           BACKEND_WORKER_COUNT: '{{form.pipeline.parameters.backend_worker_count}}'
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
     execute: false
+  icon-deploy-pipeline:
+    service_id: pipeline
+    parameters:
+      services:
+        - icon-r2-server-repo
+        - icon-r2-kibana-repo
+        - icon-r2-frontend-nginx-repo
+        - icon-r2-clamav-repo
+        - icon-r2-dhir-nginx-repo
+        - icon-r2-init-setup-repo
+      name: 'icon-deploy-pipeline'
+      configuration:
+        content:
+          $ref: icon-deploy-pipeline.yml
+          $refType: text
+        env:
+          INIT_REPO: icon-r2-init-setup-repo
+          SERVER_REPO: icon-r2-server-repo
+          CLAMAV_REPO: icon-r2-clamav-repo
+          DHIR_NGINX_REPO: icon-r2-dhir-nginx-repo
+          FRONTEND_REPO: icon-r2-frontend-nginx-repo
+          ICON_KIBANA_REPO: icon-r2-kibana-repo
+          SERVER_NAME: '{{form.pipeline.parameters.server-app-name}}'
+          WORKER_NAME: '{{form.pipeline.parameters.server-worker-app-name}}'
+          KIBANA_NAME: '{{form.pipeline.parameters.kibana-app-name}}'
+          DHIR_NGINX_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
+          FRONTEND_NAME: '{{form.pipeline.parameters.frontend-nginx-app-name}}'
+          CLAMAV_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
+          PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
+          PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
+          PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
+          ICON_DOMAIN: '{{form.pipeline.parameters.icon-domain}}'
+          CLAMAV_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
+          DHIR_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
+          CRYPTO_PASSWORD: '{{form.pipeline.parameters.crypto-password}}'
+          JWT_TOKEN_SECRET_KEY: '{{form.pipeline.parameters.jwt-secret}}'
+          PHIX_ENDPOINT_DICTIONARY: '{{form.pipeline.parameters.endpoint_dictionary}}'
+          PHIX_ENDPOINT_RETRIEVAL: '{{form.pipeline.parameters.endpoint_retrieval}}'
+          PHIX_ENDPOINT_RETRIEVAL_TOKEN: '{{form.pipeline.parameters.endpoint_retrieval_token}}'
+          PHIX_ENDPOINT_SUBMISSION: '{{form.pipeline.parameters.endpoint_submission}}'
+          PHIX_ENDPOINT_SUBMISSION_TOKEN: '{{form.pipeline.parameters.endpoint_submission_token}}'
+          PHIX_ENDPOINT_PIN_ADMIN: '{{form.pipeline.parameters.endpoint_pin_admin}}'
+          PHIX_ENDPOINT_PIN_ADMIN_TOKEN: '{{form.pipeline.parameters.endpoint_pin_admin_token}}'
+          POSTGRES_READONLY_ROLE: '{{form.pipeline.parameters.postgres_readonly_role}}'
+          TZ: '{{form.pipeline.parameters.tz}}'
+          BACKEND_MEM: '{{form.pipeline.parameters.backend_mem}}'
+          BACKEND_COUNT: '{{form.pipeline.parameters.backend_count}}'
+          BACKEND_WORKER_MEM: '{{form.pipeline.parameters.backend_worker_mem}}'
+          BACKEND_WORKER_COUNT: '{{form.pipeline.parameters.backend_worker_count}}'
+          KIBANA_MEM: '{{form.pipeline.parameters.icon_kibana_mem}}'
+          KIBANA_COUNT: '{{form.pipeline.parameters.icon_kibana_count}}'
+          DHIR_NGINX_MEM: '{{form.pipeline.parameters.dhir_nginx_mem}}'
+          DHIR_NGINX_COUNT: '{{form.pipeline.parameters.dhir_nginx_count}}'
+          FRONTEND_MEM: '{{form.pipeline.parameters.frontend_mem}}'
+          FRONTEND_COUNT: '{{form.pipeline.parameters.frontend_count}}'
+          CLAMAV_MEM: '{{form.pipeline.parameters.icon_clamav_mem}}'
+          CLAMAV_COUNT: '{{form.pipeline.parameters.icon_clamav_count}}'
+          BACKEND_ENV: '{{form.pipeline.parameters.backend_env}}'
+          PHU_SELECT: '{{form.pipeline.parameters.PHUs}}'
+          CUSTOM_PHU: '{{form.pipeline.parameters.customPHUs}}'
+          FRONT_END_DOMAIN: '{{form.pipeline.parameters.front_end_domain}} '
+          GET_CERT: '{{form.pipeline.scripts.get-cert}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+      execute: false
 form:
   pipeline:
     scripts:
