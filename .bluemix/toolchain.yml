@@ -298,12 +298,12 @@ form:
           cf stop \$OLD_CF_APP
         fi
     parameters:
-      server-app-name: 'icon-server'
-      server-worker-app-name: 'icon-server-worker'
-      frontend-nginx-app-name: 'icon-nginx'
-      dhir-nginx-app-name: 'dhir-nginx'
-      kibana-app-name: 'icon-kibana'
-      clamav-app-name: 'icon-clamav-{{form.pipeline.parameters.prod-space}}'
+      server-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server'
+      server-worker-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server-worker'
+      frontend-nginx-app-name: '{{form.pipeline.parameters.prod-space}}-icon-nginx'
+      dhir-nginx-app-name: '{{form.pipeline.parameters.prod-space}}-dhir-nginx'
+      kibana-app-name: '{{form.pipeline.parameters.prod-space}}-icon-kibana'
+      clamav-app-name: '{{form.pipeline.parameters.prod-space}}-icon-clamav'
       icon-domain: 'ehealthontario.ca-east.mybluemix.net'
       crypto-password: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4EGEFDD432DRGCD'
       jwt-secret: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4'

@@ -420,53 +420,6 @@
             "key": "tz"
         },
         {
-            "type": "text",
-            "readonly": false,
-            "title": {
-                "$ref": "#/messages/icon-domain"
-            },
-            "key": "icon-domain"
-        },
-        {
-            "type": "selectfieldset",
-            "key": "PHUs",
-            "titleMap": {
-                "Full": "All PHUs",
-                "Null": "Input PHUs"
-            },
-            "items": [
-                {
-                    "type": "section",
-                    "description": "PHUs on-boarded on Sept,1st (please refer to offical documentation for detail). Plus xxsupportphu1."
-                },
-                {
-                    "type": "section",
-                    "description": "Input your PHU acronyms below",
-                    "items": [
-                        {
-                            "type": "text",
-                            "key": "customPHUs",
-                            "title": {
-                                "$ref": "#/messages/deploy.customPHUs"
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type": "text",
-            "readonly": false,
-            "title": {
-                "$ref": "#/messages/deploy.front_end_domain"
-            },
-            "key": "front_end_domain"
-        },
-        {
-            "type":"select",
-            "key":"backend_env"
-        },
-        {
             "type": "table",
             "columnCount": 3,
             "widths": [
@@ -651,6 +604,53 @@
                     "key": "icon_clamav_count"
                 }
             ]
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/icon-domain"
+            },
+            "key": "icon-domain"
+        },
+        {
+            "type": "selectfieldset",
+            "key": "PHUs",
+            "titleMap": {
+                "Full": "All PHUs",
+                "Null": "Input PHUs"
+            },
+            "items": [
+                {
+                    "type": "section",
+                    "description": "PHUs on-boarded on Sept,1st (please refer to offical documentation for detail). Plus xxsupportphu1."
+                },
+                {
+                    "type": "section",
+                    "description": "Input your PHU acronyms below",
+                    "items": [
+                        {
+                            "type": "text",
+                            "key": "customPHUs",
+                            "title": {
+                                "$ref": "#/messages/deploy.customPHUs"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.front_end_domain"
+            },
+            "key": "front_end_domain"
+        },
+        {
+            "type":"select",
+            "key":"backend_env"
         },
         {
             "type": "table",
