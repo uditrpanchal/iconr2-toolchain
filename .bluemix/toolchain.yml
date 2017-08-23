@@ -303,7 +303,7 @@ form:
       frontend-nginx-app-name: 'icon-nginx'
       dhir-nginx-app-name: 'dhir-nginx'
       kibana-app-name: 'icon-kibana'
-      clamav-app-name: 'icon-clamav-{{this.prod-space}}'
+      clamav-app-name: 'icon-clamav-{{form.pipeline.parameters.prod-space}}'
       icon-domain: 'ehealthontario.ca-east.mybluemix.net'
       crypto-password: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4EGEFDD432DRGCD'
       jwt-secret: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4'
