@@ -1,6 +1,6 @@
 ---
 stages:
-- name: Setup scripts
+- name: Init Check
   inputs:
   - service: ${INIT_REPO}
     type: git
@@ -10,56 +10,411 @@ stages:
   - type: stage
     enabled: false
   jobs:
-  - name: Create Elastic search service
+  - name: Check
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      if true
+      then
+      fi
+- name: Build dhir nginx
+  inputs:
+  - service: ${DHIR_NGINX_REPO}
+    type: git
+    branch: ${BACKEND_ENV}
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
+- name: Deploy dhir nginx
+  inputs:
+  - type: job
+    stage: Build dhir nginx
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: DHIR_NGINX_MEM
+    type: text
+    value: ${DHIR_NGINX_MEM}
+  - name: DHIR_NGINX_COUNT
+    type: text
+    value: ${DHIR_NGINX_COUNT}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
     type: deployer
-    fail_stage: false
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${DHIR_NGINX_NAME}
+    script: |-
+      #!/bin/bash
+      # setup deploy function
+      deploy(){
+        cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
+        cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
+      }
+      export -f deploy
+      
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+- name: Build CLAMAV
+  inputs:
+  - service: ${CLAMAV_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
+- name: Deploy CLAMAV
+  inputs:
+  - type: job
+    stage: Build CLAMAV
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: CLAMAV_MEM
+    type: text
+    value: ${CLAMAV_MEM}
+  - name: CLAMAV_COUNT
+    type: text
+    value: ${CLAMAV_COUNT}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CLAMAV_NAME}
+    script: |-
+      #!/bin/bash
+      # deployment script
+      deploy(){
+        cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
+        cf scale -f -i ${CLAMAV_COUNT} -m ${CLAMAV_MEM} ${CF_APP} 
+      }
+      export -f deploy
+
+      # get bluegreen script, which makes use of deploy
+      chmod +x bg.sh
+      ./bg.sh
+- name: Build server and worker
+  inputs:
+  - service: ${SERVER_REPO}
+    type: git
+    branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: GET_CERT
+    type: text_area
+    value: ${GET_CERT}
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+      echo "$GET_CERT" > getcert.sh
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
+- name: Deploy server
+  inputs:
+  - type: job
+    stage: Build server and worker
+    job: Build
+    dir_name: null
+  properties:
+  - name: CRYPTO_PASSWORD
+    type: secure
+    value: ${CRYPTO_PASSWORD}
+  - name: JWT_TOKEN_SECRET_KEY
+    type: secure
+    value: ${JWT_TOKEN_SECRET_KEY}
+  - name: PHIX_ENDPOINT_DICTIONARY
+    type: text
+    value: ${PHIX_ENDPOINT_DICTIONARY}
+  - name: PHIX_ENDPOINT_RETRIEVAL
+    type: text
+    value: ${PHIX_ENDPOINT_RETRIEVAL}
+  - name: PHIX_ENDPOINT_RETRIEVAL_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+  - name: PHIX_ENDPOINT_SUBMISSION
+    type: text
+    value: ${PHIX_ENDPOINT_SUBMISSION}
+  - name: PHIX_ENDPOINT_SUBMISSION_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+  - name: PHIX_ENDPOINT_PIN_ADMIN
+    type: text
+    value: ${PHIX_ENDPOINT_PIN_ADMIN}
+  - name: PHIX_ENDPOINT_PIN_ADMIN_TOKEN
+    type: secure
+    value: ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+  - name: POSTGRES_READONLY_ROLE
+    type: text
+    value: ${POSTGRES_READONLY_ROLE}
+  - name: TZ
+    type: text
+    value: ${TZ}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: BACKEND_MEM
+    type: text
+    value: ${BACKEND_MEM}
+  - name: BACKEND_COUNT
+    type: text
+    value: ${BACKEND_COUNT}
+  - name: BACKEND_WORKER_MEM
+    type: text
+    value: ${BACKEND_WORKER_MEM}
+  - name: BACKEND_WORKER_COUNT
+    type: text
+    value: ${BACKEND_WORKER_COUNT}
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  jobs:
+  - name: Deploy server
+    type: deployer
     target:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}
       space: ${PROD_SPACE_NAME}
       application: ${SERVER_NAME}
-    script: |
-      #!/bin/sh
-
-      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
-      npm i child_process
-
-      node scripts/one-time-setup.js compose-elasticsearch-dedicated icon-elasticsearch Credential1
-  - name: Create PostgreSQL service
+    script: |-
+      #!/bin/bash
+      # getting credential of elasticsearch
+      deploy(){
+        source getcert.sh
+        getcert
+        cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
+        # Prepare configuration\
+        # GET CLAMAV endpoint
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        # GET DHIR NGINX ENDPOINT
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        #Setting env for server
+        cf set-env $SERVER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env $SERVER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env $SERVER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env $SERVER_NAME TZ ${TZ}
+        cf set-env $SERVER_NAME SERVER_TYPE 1
+        if [ -f cert.pem ]
+        then
+          cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
+        fi      
+        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
+        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+        cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  $SERVER_NAME
+      }
+      
+      export -f deploy
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+  - name: Deploy worker
     type: deployer
-    fail_stage: false
     target:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}
       space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME1}
-    script: |
-      #!/bin/sh
-
-      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
-      npm i child_process
-
-      node scripts/one-time-setup.js compose-postgresql-dedicated icon-postgresql Credential1
-  - name: Create Rabbit-MQ service
-    type: deployer
-    fail_stage: false
-    target:
-      region_id: ${PROD_REGION_ID}
-      organization: ${PROD_ORG_NAME}
-      space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME1}
-    script: |
-      #!/bin/sh
-
-      export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
-      npm i child_process
-
-      node scripts/one-time-setup.js compose-rabbitmq-dedicated icon-rabbitmq Credential1
-- name: Deploy PSQL
+      application: ${WORKER_NAME}
+    script: |-
+      #!/bin/bash
+      # getting credential of elasticsearch
+      deploy(){
+        source getcert.sh
+        getcert
+        cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
+        # GET CLAMAV endpoint
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        # GET DHIR NGINX ENDPOINT
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        # Setting env for server worker
+        cf set-env $WORKER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env $WORKER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env $WORKER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env $WORKER_NAME TZ ${TZ}
+        cf set-env $WORKER_NAME SERVER_TYPE 2
+        if [ -f cert.pem ]
+        then
+          cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem
+        fi
+        cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} $WORKER_NAME
+      }
+      export -f deploy
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+- name: Build ICONR2 UI
   inputs:
-  - service: ${INIT_REPO}
+  - service: ${FRONTEND_REPO}
     type: git
     branch: master
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: BLUE_GREEN
+    type: text_area
+    value: ${BLUE_GREEN}
+  jobs:
+  - name: Build
+    type: builder
+    artifact_dir: ''
+    build_type: shell
+    script: |
+      #!/bin/bash
+       # get bluegreen script
+      echo "$BLUE_GREEN" > bg.sh
+- name: Deploy ICONR2 UI
+  inputs:
+  - type: job
+    stage: Build ICONR2 UI
+    job: Build
+    dir_name: null
+  properties:
+  - name: ICON_DOMAIN
+    type: text
+    value: ${ICON_DOMAIN}
+  - name: ICON_SERVER_NAME
+    type: text
+    value: ${SERVER_NAME}
+  - name: PHU_SELECT
+    type: text
+    value: ${PHU_SELECT}
+  - name: FRONT_END_DOMAIN
+    type: text
+    value: ${FRONT_END_DOMAIN}
+  - name: CUSTOM_PHU
+    type: text
+    value: ${CUSTOM_PHU}
+  - name: FRONTEND_MEM
+    type: text
+    value: ${FRONTEND_MEM}
+  - name: FRONTEND_COUNT
+    type: text
+    value: ${FRONTEND_COUNT}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash    
+      deploy(){
+        cf push ${CF_APP}  -f bluemix/base-manifest.yml --no-start --no-route
+
+        PHUs=
+        if [ -z ${PHU_SELECT} ]
+        then
+          PHUs=${CUSTOM_PHU}
+        else
+          if [ ${PHU_SELECT} = "Full" ]
+          then
+            PHUs='xxsupportphu1,aph,bchu,ckphu,drhd,eohu,esthu,gbhu,hnhu,hkpr,hrhd,hph,hpechu,hchu,kfla,lph,lgl,mlhu,nrph,nbpsdhu,nwhu,oph,ocph,peel,pdhu,pcchu,po,rowph,re,smdhu,sdhu,tbdhu,timhu,tph,wdgph,wechu,yrphu' 
+          else
+            PHUs=${CUSTOM_PHU}
+          fi
+        fi
+
+        for i in $(echo $PHUs | tr ',' ' ')
+        do
+          cf map-route ${CF_APP} ${FRONT_END_DOMAIN} --hostname $i
+        done
+      
+        cf set-env ${CF_APP} ICON_SERVER https://${ICON_SERVER_NAME}.${ICON_DOMAIN}
+      
+        cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}
+      }
+      export -f deploy
+
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+- name: Post Check
+  inputs:
+  - type: job
+    stage: Init Check
+    job: Check
     dir_name: null
   triggers:
   - type: stage
@@ -70,12 +425,13 @@ stages:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}
       space: ${PROD_SPACE_NAME}
-      application: populate_psql
+      application: ${CF_APP_NAME}
     script: |-
       #!/bin/bash
-      PATH=$(pwd)/pgsql/bin:$PATH
-
-      ./scripts/exec_psql.sh icon-postgresql Credential1
+      # setup deploy function
+      if true
+      then
+      fi
 hooks:
 - enabled: true
   label: null

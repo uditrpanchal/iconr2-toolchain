@@ -420,6 +420,14 @@
             "key": "tz"
         },
         {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/icon-domain"
+            },
+            "key": "icon-domain"
+        },
+        {
             "type": "table",
             "columnCount": 3,
             "widths": [
@@ -604,14 +612,6 @@
                     "key": "icon_clamav_count"
                 }
             ]
-        },
-        {
-            "type": "text",
-            "readonly": false,
-            "title": {
-                "$ref": "#/messages/icon-domain"
-            },
-            "key": "icon-domain"
         },
         {
             "type": "selectfieldset",
