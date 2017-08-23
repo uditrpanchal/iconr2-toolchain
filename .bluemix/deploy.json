@@ -504,12 +504,12 @@
                 },
                 {
                     "type": "text",
-                    "key": "frontend-nginx-app-name"
+                    "key": "frontend-nginx-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",
-                    "key": "frontend_mem",
-                    "readonly": true
+                    "key": "frontend_mem"
                 },
                 {
                     "type": "select",
