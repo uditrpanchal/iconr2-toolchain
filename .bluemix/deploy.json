@@ -508,7 +508,8 @@
                 },
                 {
                     "type": "select",
-                    "key": "frontend_mem"
+                    "key": "frontend_mem",
+                    "readonly": true
                 },
                 {
                     "type": "select",
@@ -530,7 +531,8 @@
                 },
                 {
                     "type": "text",
-                    "key": "dhir-nginx-app-name"
+                    "key": "dhir-nginx-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",
@@ -556,7 +558,8 @@
                 },
                 {
                     "type": "text",
-                    "key": "kibana-app-name"
+                    "key": "kibana-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",
@@ -582,8 +585,8 @@
                 },
                 {
                     "type": "text",
-                    "readonly": false,
-                    "key": "server-app-name"
+                    "key": "server-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",
@@ -609,7 +612,8 @@
                 },
                 {
                     "type": "text",
-                    "key": "server-worker-app-name"
+                    "key": "server-worker-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",
@@ -635,7 +639,8 @@
                 },
                 {
                     "type": "text",
-                    "key": "clamav-app-name"
+                    "key": "clamav-app-name",
+                    "readonly": true
                 },
                 {
                     "type": "select",

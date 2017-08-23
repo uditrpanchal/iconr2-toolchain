@@ -219,12 +219,12 @@ services:
           DHIR_NGINX_REPO: icon-r2-dhir-nginx-repo
           FRONTEND_REPO: icon-r2-frontend-nginx-repo
           ICON_KIBANA_REPO: icon-r2-kibana-repo
-          SERVER_NAME: '{{form.pipeline.parameters.server-app-name}}-{{form.pipeline.parameters.prod-space}}'
-          WORKER_NAME: '{{form.pipeline.parameters.server-worker-app-name}}'
-          KIBANA_NAME: '{{form.pipeline.parameters.kibana-app-name}}'
-          DHIR_NGINX_NAME: '{{form.pipeline.parameters.dhir-nginx-app-name}}'
-          FRONTEND_NAME: '{{form.pipeline.parameters.frontend-nginx-app-name}}'
-          CLAMAV_NAME: '{{form.pipeline.parameters.clamav-app-name}}'
+          SERVER_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.server-app-name}}'
+          WORKER_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.server-worker-app-name}}'
+          KIBANA_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.kibana-app-name}}'
+          DHIR_NGINX_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.dhir-nginx-app-name}}'
+          FRONTEND_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.frontend-nginx-app-name}}'
+          CLAMAV_NAME: '{{form.pipeline.parameters.prod-space}}-{{form.pipeline.parameters.clamav-app-name}}'
           PROD_SPACE_NAME: '{{form.pipeline.parameters.prod-space}}'
           PROD_ORG_NAME: '{{form.pipeline.parameters.prod-organization}}'
           PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
