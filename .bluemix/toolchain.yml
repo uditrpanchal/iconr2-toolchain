@@ -1,17 +1,17 @@
 version: 2
 template:
   name: ICON r2 Development Toolchain Template
-  description: This Toolchain is for Developing ICON r2.  Each deployment is tagged.
+  description: This Toolchain is for Developing ICON r2. 
   info:
-    git url: '[https://github.com/Shifeng-ON/icon-deploy-two-domain](https://github.com/Shifeng-ON/icon-r2)'
-    git branch: '[bg](https://github.com/Shifeng-ON/icon-r2/tree/bg)'
+    git url: '[https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2)'
+    git branch: '[test](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2/tree/test)'
 toolchain:
-  name: icon2-dev-toolchain-{{timestamp}}
+  name: icon2-toolchain-{{timestamp}}
 services:
   icon-r2-init-setup-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-init-setup.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-init-setup.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -33,10 +33,10 @@ services:
           PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
     execute: false
   icon-r2-clamav-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
       repo_name: '{{toolchain.name}}'
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-clamav.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-clamav.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -62,9 +62,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-frontend-nginx-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-frontend-nginx.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-frontend-nginx.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -95,9 +95,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-dhir-nginx-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-dhir-nginx.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-dhir-nginx.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -123,9 +123,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-kibana-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-kibana.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-kibana.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -152,9 +152,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-server-repo:
-    service_id: githubpublic
+    service_id: github
     parameters:
-      repo_url: 'https://github.com/MOHLTC11/icon-r2-backend.git'
+      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-backend.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -241,19 +241,19 @@ form:
       kibana-app-name: 'icon-kibana'
       clamav-app-name: 'icon-clamav'
       icon-domain: 'ehealthontario.ca-east.mybluemix.net'
-      crypto-password: '<password>'
-      jwt-secret: '<JWT Token>'
+      crypto-password: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4EGEFDD432DRGCD'
+      jwt-secret: '0831091F47114659B3901BD590B85C7C4976A6BEF194549639B2A284B754C6E4'
       endpoint_dictionary: '/API/FHIR/Immunizations/v2/Dictionary?domain='
       endpoint_retrieval: '/API/FHIR/Immunizations/v2/Immunization'
-      endpoint_retrieval_token: '<retrieval token>'
+      endpoint_retrieval_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTcxMTE1OTAsInN1YiI6ImFzZGZzZGFmIiwiaXNzIjoiYXNkZmFzZGYiLCJhdWQiOiJhc2RmYXNkZiIsImp0aSI6ImFzZGZhc2RmIiwiaWF0IjoxNDY1NTc1NTkwfQ'
       endpoint_submission: '/API/FHIR/Immunizations/v2/Communication'
-      endpoint_submission_token: '<submission token>'
+      endpoint_submission_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTcxMTE1OTAsInN1YiI6ImFzZGZzZGFmIiwiaXNzIjoiYXNkZmFzZGYiLCJhdWQiOiJhc2RmYXNkZiIsImp0aSI6ImFzZGZhc2RmIiwiaWF0IjoxNDY1NTc1NTkwfQ'
       endpoint_pin_admin: '/API/FHIR/Immunizations/v2/Admin/'
-      endpoint_pin_admin_token: '<pin admin token>'
+      endpoint_pin_admin_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE0OTcxMTE1OTAsInN1YiI6ImFzZGZzZGFmIiwiaXNzIjoiYXNkZmFzZGYiLCJhdWQiOiJhc2RmYXNkZiIsImp0aSI6ImFzZGZhc2RmIiwiaWF0IjoxNDY1NTc1NTkwfQ'
       postgres_readonly_role: 'readonly:WERJFIRWJWNEDJASDF'
       front_end_domain: ''
       tz: 'America/Toronto'
-      PHUs: 'Aug,1st'
+      PHUs: 'Full'
       customPHUs: ''
       frontend_mem: '256MB'
       frontend_count: '1'

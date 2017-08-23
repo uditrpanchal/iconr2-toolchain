@@ -73,7 +73,7 @@
             "pattern": "\\S"
         },
         "crypto-password": {
-            "description": "message encrtion token",
+            "description": "message encrtyption token",
             "type": "string"
         },
         "jwt-secret": {
@@ -126,12 +126,10 @@
             "description": "Select PHUs to be made availiable",
             "type": "string",
             "enum": [
-                "Aug,1",
-                "Aug,11",
-                "Sept,1",
+                "Full",
                 "Null"
             ],
-            "value": "Aug,1"
+            "value": "Full"
         },
         "customPHUs": {
             "description": "a list of PHU acronym seperated by commas.(e.g gbhu,rowph,xxsupportphu1,.....)",
@@ -428,20 +426,10 @@
             "type": "selectfieldset",
             "key": "PHUs",
             "titleMap": {
-                "Aug,1": "Aug,1st PHUs",
-                "Aug,11": "Aug,11th PHUs",
-                "Sept,1": "Sept,1st PHUs",
-                "Null": "Any PHUs"
+                "Full": "All PHUs",
+                "Null": "Input PHUs"
             },
             "items": [
-                {
-                    "type": "section",
-                    "description": "PHUs on-boarded at Aug,1st (please refer to offical documentation for detail). Plus xxsupportphu1."
-                },
-                {
-                    "type": "section",
-                    "description": "PHUs on-boarded at Aug,11th (please refer to offical documentation for detail). Plus xxsupportphu1."
-                },
                 {
                     "type": "section",
                     "description": "PHUs on-boarded on Sept,1st (please refer to offical documentation for detail). Plus xxsupportphu1."

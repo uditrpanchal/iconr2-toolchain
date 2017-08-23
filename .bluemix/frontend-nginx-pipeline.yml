@@ -71,15 +71,9 @@ stages:
         then
           PHUs=${CUSTOM_PHU}
         else
-          if [ ${PHU_SELECT} = "Aug,1" ]
+          if [ ${PHU_SELECT} = "Full" ]
           then
-            PHUs='rowph,xxsupportphu1' 
-          elif [ ${PHU_SELECT} = "Aug,11" ]
-          then
-            PHUs='ckphu,gbhu,hnhu,hph,kfla,lph,mlhu,nwhu,pcchu,sdhu,timhu,tph,hpechu,ocph,peel,pdhu,tbdhu,rowph,xxsupportphu1' 
-          elif [ ${PHU_SELECT} = "Sept,1" ]
-          then
-            PHUs='xxsupportphu1' 
+            PHUs='xxsupportphu1,aph,bchu,ckphu,drhd,eohu,esthu,gbhu,hnhu,hkpr,hrhd,hph,hpechu,hchu,kfla,lph,lgl,mlhu,nrph,nbpsdhu,nwhu,oph,ocph,peel,pdhu,pcchu,po,rowph,re,smdhu,sdhu,tbdhu,timhu,tph,wdgph,wechu,yrphu' 
           else
             PHUs=${CUSTOM_PHU}
           fi
