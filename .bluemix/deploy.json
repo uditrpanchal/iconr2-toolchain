@@ -280,6 +280,16 @@
                 "10"
             ],
             "value": "1"
+        },
+        "backend_env": {
+            "type": "string",
+            "enum": [
+                "UAT",
+                "QA",
+                "PPE",
+                "PROD"
+            ],
+            "value": "UAT"
         }
     },
     "required": [
@@ -318,7 +328,8 @@
         "dhir_nginx_mem",
         "dhir_nginx_count",
         "icon_kibana_mem",
-        "icon_kibana_count"
+        "icon_kibana_count",
+        "backend_env"
     ],
     "form": [
         {
@@ -415,14 +426,6 @@
             "key": "icon-domain"
         },
         {
-            "type": "text",
-            "readonly": false,
-            "title": {
-                "$ref": "#/messages/deploy.front_end_domain"
-            },
-            "key": "front_end_domain"
-        },
-        {
             "type": "selectfieldset",
             "key": "PHUs",
             "titleMap": {
@@ -448,6 +451,18 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "text",
+            "readonly": false,
+            "title": {
+                "$ref": "#/messages/deploy.front_end_domain"
+            },
+            "key": "front_end_domain"
+        },
+        {
+            "type":"select",
+            "key":"backend_env"
         },
         {
             "type": "table",

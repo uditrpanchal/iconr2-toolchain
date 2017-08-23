@@ -121,6 +121,7 @@ services:
           DHIR_NGINX_MEM: '{{form.pipeline.parameters.dhir_nginx_mem}}'
           DHIR_NGINX_COUNT: '{{form.pipeline.parameters.dhir_nginx_count}}'
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+          BACKEND_ENV: '{{form.pipeline.parameters.backend_env}}'
       execute: false
   icon-r2-kibana-repo:
     service_id: github
@@ -268,5 +269,6 @@ form:
       icon_kibana_mem: '1024MB'
       icon_kibana_count: '1'
       init-setup-app-name: 'icon-r2-init-setup'
+      backend_env: 'UAT'
     schema:
       $ref: deploy.json
