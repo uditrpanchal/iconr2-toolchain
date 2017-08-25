@@ -664,7 +664,7 @@
             },
              {
                 "type": "label",
-                "title": "ICONR2 Version"
+                "title": "ICONR2 Version(master is the newest)"
             },
             {
                 "type":"select",

@@ -87,7 +87,7 @@ stages:
       #!/bin/bash
       # setup deploy function
       deploy(){
-        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME:0:2} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
+        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME:0:3} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
         cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}-new
       }
       export -f deploy
@@ -160,7 +160,7 @@ stages:
       #!/bin/bash
       # deployment script
       deploy(){
-        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME:0:2} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
+        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME:0:3} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
         cf scale -f -i ${CLAMAV_COUNT} -m ${CLAMAV_MEM} ${CF_APP}-new
       }
       export -f deploy
@@ -280,12 +280,12 @@ stages:
       deploy(){
         source getcert.sh
         getcert
-        cf push ${CF_APP}-new -d ${ICON_DOMAIN} -n ${CF_APP}-${JOB_NAME:0:2} -f bluemix/base-main-manifest.yml --no-start
+        cf push ${CF_APP}-new -d ${ICON_DOMAIN} -n ${CF_APP}-${JOB_NAME:0:3} -f bluemix/base-main-manifest.yml --no-start
         # Prepare configuration\
         # GET CLAMAV endpoint
-        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME:0:2}.${ICON_DOMAIN}/scan
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME:0:3}.${ICON_DOMAIN}/scan
         # GET DHIR NGINX ENDPOINT
-        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME:0:2}.${ICON_DOMAIN}
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME:0:3}.${ICON_DOMAIN}
         #Setting env for server
         cf set-env ${SERVER_NAME}-new CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
         cf set-env ${SERVER_NAME}-new JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
@@ -326,9 +326,9 @@ stages:
         getcert
         cf push ${CF_APP}-new -f bluemix/base-worker-manifest.yml  --no-start
         # GET CLAMAV endpoint
-        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME:0:2}.${ICON_DOMAIN}/scan
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME:0:3}.${ICON_DOMAIN}/scan
         # GET DHIR NGINX ENDPOINT
-        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME:0:2}.${ICON_DOMAIN}
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME:0:3}.${ICON_DOMAIN}
         # Setting env for server worker
         cf set-env ${WORKER_NAME}-new CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
         cf set-env ${WORKER_NAME}-new JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
@@ -419,7 +419,7 @@ stages:
       deploy(){
         cf push ${CF_APP}-new -n xxsupportphu1 -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
           
-        cf set-env ${CF_APP}-new ICON_SERVER https://${SERVER_NAME}-${JOB_NAME:0:2}.${ICON_DOMAIN}
+        cf set-env ${CF_APP}-new ICON_SERVER https://${SERVER_NAME}-${JOB_NAME:0:3}.${ICON_DOMAIN}
       
         cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}-new
       }
