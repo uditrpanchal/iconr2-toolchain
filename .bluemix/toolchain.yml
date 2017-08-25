@@ -288,7 +288,7 @@ form:
           exit 1
         }
         set -e
-        trap rollback ERR
+        trap cleanup ERR
         deploy
     
     parameters:
