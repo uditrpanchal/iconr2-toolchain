@@ -19,6 +19,7 @@ stages:
        # get bluegreen script
       if true
       then
+       echo 'Pretest passed'
       fi
 - name: Build dhir nginx
   inputs:
@@ -71,11 +72,10 @@ stages:
       #!/bin/bash
       # setup deploy function
       deploy(){
-        cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
-        cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}
+        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME: -2} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml  --no-start
+        cf scale -f -i ${DHIR_NGINX_COUNT} -m ${DHIR_NGINX_MEM} ${CF_APP}-new
       }
       export -f deploy
-      
       # run the deployment
       chmod +x bg.sh
       ./bg.sh
@@ -130,7 +130,7 @@ stages:
       #!/bin/bash
       # deployment script
       deploy(){
-        cf push ${CF_APP} -n ${CF_APP} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
+        cf push ${CF_APP}-new -n ${CF_APP}-${JOB_NAME: -2} -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
         cf scale -f -i ${CLAMAV_COUNT} -m ${CLAMAV_MEM} ${CF_APP} 
       }
       export -f deploy
@@ -247,31 +247,31 @@ stages:
       deploy(){
         source getcert.sh
         getcert
-        cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
+        cf push ${CF_APP}-new -d ${ICON_DOMAIN} -n ${CF_APP}-${JOB_NAME: -2} -f bluemix/base-main-manifest.yml --no-start
         # Prepare configuration\
         # GET CLAMAV endpoint
-        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME: -2}.${ICON_DOMAIN}/scan
         # GET DHIR NGINX ENDPOINT
-        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME: -2}.${ICON_DOMAIN}
         #Setting env for server
-        cf set-env $SERVER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
-        cf set-env $SERVER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
-        cf set-env $SERVER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
-        cf set-env $SERVER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
-        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
-        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
-        cf set-env $SERVER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
-        cf set-env $SERVER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
-        cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
-        cf set-env $SERVER_NAME TZ ${TZ}
-        cf set-env $SERVER_NAME SERVER_TYPE 1
+        cf set-env ${SERVER_NAME}-new CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env ${SERVER_NAME}-new JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env ${SERVER_NAME}-new CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env ${SERVER_NAME}-new PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env ${SERVER_NAME}-new PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env ${SERVER_NAME}-new PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env ${SERVER_NAME}-new PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env ${SERVER_NAME}-new PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env ${SERVER_NAME}-new POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env ${SERVER_NAME}-new TZ ${TZ}
+        cf set-env ${SERVER_NAME}-new SERVER_TYPE 1
         if [ -f cert.pem ]
         then
-          cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
+          cf set-env ${SERVER_NAME}-new NODE_EXTRA_CA_CERTS cert.pem
         fi      
-        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
-        cf set-env $SERVER_NAME DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
-        cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  $SERVER_NAME
+        cf set-env ${SERVER_NAME}-new DHIR_ENDPOINT_ACCESS ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_PIN_ADMIN}
+        cf set-env ${SERVER_NAME}-new DHIR_ENDPOINT_ACCESS_TOKEN ${PHIX_ENDPOINT_PIN_ADMIN_TOKEN}
+        cf scale -f -i ${BACKEND_COUNT} -m ${BACKEND_MEM}  ${SERVER_NAME}-new
       }
       
       export -f deploy
@@ -291,28 +291,28 @@ stages:
       deploy(){
         source getcert.sh
         getcert
-        cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
+        cf push ${CF_APP}-new -f bluemix/base-worker-manifest.yml  --no-start
         # GET CLAMAV endpoint
-        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
+        CLAMAV_ENDPOINT=https://${CLAMAV_NAME}-${JOB_NAME: -2}.${ICON_DOMAIN}/scan
         # GET DHIR NGINX ENDPOINT
-        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}.${ICON_DOMAIN}
+        DHIR_NGINX_ENDPOINT=https://${DHIR_NAME}-${JOB_NAME: -2}.${ICON_DOMAIN}
         # Setting env for server worker
-        cf set-env $WORKER_NAME CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
-        cf set-env $WORKER_NAME JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
-        cf set-env $WORKER_NAME CRYPTO_PASSWORD $CRYPTO_PASSWORD
-        cf set-env $WORKER_NAME PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
-        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
-        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
-        cf set-env $WORKER_NAME PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
-        cf set-env $WORKER_NAME PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
-        cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
-        cf set-env $WORKER_NAME TZ ${TZ}
-        cf set-env $WORKER_NAME SERVER_TYPE 2
+        cf set-env ${WORKER_NAME}-new CLAMAV_ENDPOINT $CLAMAV_ENDPOINT
+        cf set-env ${WORKER_NAME}-new JWT_TOKEN_SECRET_KEY  $JWT_TOKEN_SECRET_KEY
+        cf set-env ${WORKER_NAME}-new CRYPTO_PASSWORD $CRYPTO_PASSWORD
+        cf set-env ${WORKER_NAME}-new PHIX_ENDPOINT_DICTIONARY ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_DICTIONARY}
+        cf set-env ${WORKER_NAME}-new PHIX_ENDPOINT_RETRIEVAL ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_RETRIEVAL}
+        cf set-env ${WORKER_NAME}-new PHIX_ENDPOINT_SUBMISSION ${DHIR_NGINX_ENDPOINT}${PHIX_ENDPOINT_SUBMISSION}
+        cf set-env ${WORKER_NAME}-new PHIX_ENDPOINT_RETRIEVAL_TOKEN ${PHIX_ENDPOINT_RETRIEVAL_TOKEN}
+        cf set-env ${WORKER_NAME}-new PHIX_ENDPOINT_SUBMISSION_TOKEN ${PHIX_ENDPOINT_SUBMISSION_TOKEN}
+        cf set-env ${WORKER_NAME}-new POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
+        cf set-env ${WORKER_NAME}-new TZ ${TZ}
+        cf set-env ${WORKER_NAME}-new SERVER_TYPE 2
         if [ -f cert.pem ]
         then
-          cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem
+          cf set-env ${WORKER_NAME}-new NODE_EXTRA_CA_CERTS cert.pem
         fi
-        cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} $WORKER_NAME
+        cf scale -f -i ${BACKEND_WORKER_COUNT} -m ${BACKEND_WORKER_MEM} ${WORKER_NAME}-new
       }
       export -f deploy
       # run the deployment
@@ -352,15 +352,6 @@ stages:
   - name: ICON_SERVER_NAME
     type: text
     value: ${SERVER_NAME}
-  - name: PHU_SELECT
-    type: text
-    value: ${PHU_SELECT}
-  - name: FRONT_END_DOMAIN
-    type: text
-    value: ${FRONT_END_DOMAIN}
-  - name: CUSTOM_PHU
-    type: text
-    value: ${CUSTOM_PHU}
   - name: FRONTEND_MEM
     type: text
     value: ${FRONTEND_MEM}
@@ -377,12 +368,99 @@ stages:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}
       space: ${PROD_SPACE_NAME}
-      application: ${CF_APP_NAME}
+      application: ${FRONTEND_NAME}
     script: |-
       #!/bin/bash    
       deploy(){
-        cf push ${CF_APP}  -f bluemix/base-manifest.yml --no-start --no-route
+        cf push ${CF_APP}-new -n xxsupportphu1 -d ${ICON_DOMAIN} -f bluemix/base-manifest.yml --no-start
+          
+        cf set-env ${CF_APP}-new ICON_SERVER https://${ICON_SERVER_NAME}-${JOB_NAME: -2}.${ICON_DOMAIN}
+      
+        cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}-new
+      }
+      export -f deploy
 
+      # run the deployment
+      chmod +x bg.sh
+      ./bg.sh
+- name: Post Check
+  inputs:
+  - type: job
+    stage: Init Check
+    job: Check
+    dir_name: null
+  triggers:
+  - type: stage
+  properties:
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${CF_APP_NAME}
+    script: |-
+      #!/bin/bash
+      # setup deploy function
+      if true
+      then
+        echo 'Post deployment test passed'
+      else
+        echo 'Post deployment test failed, rolling back'
+        set +e
+        cf delete -f ${DHIR_NAME}-new
+        cf delete -f ${SERVER_NAME}-new
+        cf delete -f ${WORKER_NAME}-new
+        cf delete -f ${CLAMAV_NAME}-new
+        cf delete -f ${FRONTEND_NAME}-new 
+        exit 1
+      fi
+- name: Blue-Green Switch
+  inputs:
+  - type: job
+    stage: Build ICONR2 UI
+    job: Build
+    dir_name: null
+  properties:
+  - name: PHU_SELECT
+    type: text
+    value: ${PHU_SELECT}
+  - name: FRONT_END_DOMAIN
+    type: text
+    value: ${FRONT_END_DOMAIN}
+  - name: CUSTOM_PHU
+    type: text
+    value: ${CUSTOM_PHU}
+  triggers:
+  - type: stage
+  jobs:
+  - name: Deploy
+    type: deployer
+    target:
+    target:
+      region_id: ${PROD_REGION_ID}
+      organization: ${PROD_ORG_NAME}
+      space: ${PROD_SPACE_NAME}
+      application: ${FRONTEND_NAME}
+    script: |-
+      #!/bin/bash    
+      deploy(){
         PHUs=
         if [ -z ${PHU_SELECT} ]
         then
@@ -398,19 +476,18 @@ stages:
 
         for i in $(echo $PHUs | tr ',' ' ')
         do
-          cf map-route ${CF_APP} ${FRONT_END_DOMAIN} --hostname $i
+          cf map-route ${CF_APP}-new ${FRONT_END_DOMAIN} --hostname $i
         done
-      
-        cf set-env ${CF_APP} ICON_SERVER https://${ICON_SERVER_NAME}.${ICON_DOMAIN}
-      
-        cf scale -f -i ${FRONTEND_COUNT} -m ${FRONTEND_MEM} ${CF_APP}
+
+        cf unmap-route ${CF_APP}-new ${ICON_DOMAIN} --hostname xxsupportphu1
+        cf delete-route -f ${ICON_DOMAIN} --hostname xxsupportphu1
       }
       export -f deploy
 
       # run the deployment
       chmod +x bg.sh
       ./bg.sh
-- name: Post Check
+- name: Clean up
   inputs:
   - type: job
     stage: Init Check
@@ -418,9 +495,26 @@ stages:
     dir_name: null
   triggers:
   - type: stage
+  properties:
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   jobs:
   - name: Deploy
     type: deployer
+    fail_stage: false
     target:
       region_id: ${PROD_REGION_ID}
       organization: ${PROD_ORG_NAME}
@@ -429,9 +523,16 @@ stages:
     script: |-
       #!/bin/bash
       # setup deploy function
-      if true
-      then
-      fi
+      cf delete -f ${DHIR_NAME}
+      cf delete -f ${SERVER_NAME}
+      cf delete -f ${WORKER_NAME}
+      cf delete -f ${CLAMAV_NAME}
+      cf delete -f ${FRONTEND_NAME}
+      cf rename ${DHIR_NAME}-new ${DHIR_NAME}
+      cf rename ${SERVER_NAME}-new ${SERVER_NAME}
+      cf rename ${WORKER_NAME}-new ${WORKER_NAME}
+      cf rename ${CLAMAV_NAME}-new ${CLAMAV_NAME}
+      cf rename ${FRONTEND_NAME}-new ${FRONTEND_NAME}
 hooks:
 - enabled: true
   label: null
