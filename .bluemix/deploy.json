@@ -12,6 +12,7 @@
     "longDescription": {
         "$ref": "#/messages/deploy.longDescription"
     },
+    "default": "master",
     "type": "object",
     "properties": {
         "prod-region": {
@@ -294,10 +295,9 @@
             "value": "UAT"
         },
         "app_version":{
-            "title":"ICONR2 Version",
+            "title":"Default to newest(master)",
             "description":"Version name corresponding to ICONR2 github branch",
-            "type":"string",
-            "defaults":"master"
+            "type":"string"
         }
     },
     "required": [
@@ -657,7 +657,7 @@
         {"type":"table",
         "columnCount":2,
         "widths":[
-            "50%","50%"
+            "40%","60%"
         ],
         "items":[
             {
