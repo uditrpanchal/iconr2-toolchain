@@ -292,6 +292,12 @@
                 "PROD"
             ],
             "value": "UAT"
+        },
+        "app_version":{
+            "title":"ICONR2 Version",
+            "description":"Version name corresponding to ICONR2 github branch",
+            "type":"string",
+            "default":"master"
         }
     },
     "required": [
@@ -648,9 +654,21 @@
             },
             "key": "front_end_domain"
         },
-        {
-            "type":"select",
-            "key":"backend_env"
+        {"type":"table",
+        "columnCount":2,
+        "widths":[
+            "50%","50%"
+        ],
+        "items":[
+            {
+                "type":"select",
+                "key":"backend_env"
+            },
+            {
+                "type":"text",
+                "key":"app_version"
+            }
+        ]
         },
         {
             "type": "table",

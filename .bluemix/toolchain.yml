@@ -327,5 +327,6 @@ form:
       icon_kibana_count: '1'
       init-setup-app-name: 'icon-r2-init-setup'
       backend_env: 'UAT'
+      app_version: ''
     schema:
       $ref: deploy.json
