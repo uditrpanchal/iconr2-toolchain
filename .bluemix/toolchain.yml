@@ -258,6 +258,7 @@ services:
           CUSTOM_PHU: '{{form.pipeline.parameters.customPHUs}}'
           FRONT_END_DOMAIN: '{{form.pipeline.parameters.front_end_domain}} '
           GET_CERT: '{{form.pipeline.scripts.get-cert}}'
+          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
 form:
   pipeline:
