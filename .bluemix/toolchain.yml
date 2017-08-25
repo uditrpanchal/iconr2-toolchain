@@ -259,6 +259,7 @@ services:
           FRONT_END_DOMAIN: '{{form.pipeline.parameters.front_end_domain}} '
           GET_CERT: '{{form.pipeline.scripts.get-cert}}'
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+          VERSION: '{{form.pipeline.parameters.app_version}}'
       execute: false
 form:
   pipeline:

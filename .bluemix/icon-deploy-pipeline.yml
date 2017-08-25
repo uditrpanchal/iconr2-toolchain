@@ -172,7 +172,7 @@ stages:
   inputs:
   - service: ${SERVER_REPO}
     type: git
-    branch: master
+    branch: ${VERSION}
     dir_name: null
   triggers:
   - type: stage
@@ -355,7 +355,7 @@ stages:
   inputs:
   - service: ${FRONTEND_REPO}
     type: git
-    branch: master
+    branch: ${VERSION}
     dir_name: null
   triggers:
   - type: stage
