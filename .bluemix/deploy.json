@@ -297,7 +297,7 @@
             "title":"ICONR2 Version",
             "description":"Version name corresponding to ICONR2 github branch",
             "type":"string",
-            "default":"master"
+            "defaults":"master"
         }
     },
     "required": [
