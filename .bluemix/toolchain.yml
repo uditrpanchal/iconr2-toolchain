@@ -288,7 +288,6 @@ form:
           cf delete -f \${FRONTEND_NAME}-new 
           exit 1
         }
-        set -e
         trap cleanup ERR
         deploy
     
