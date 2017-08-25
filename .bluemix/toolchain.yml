@@ -279,7 +279,7 @@ form:
         echo "Blue Green Deployment"
         cleanup() {
           set +e  
-          echo "Deployment failed, cleaning up"
+          echo "Deployment failed, deleting all deployed components"
           cf delete -f \${DHIR_NAME}-new
           cf delete -f \${SERVER_NAME}-new
           cf delete -f \${WORKER_NAME}-new
