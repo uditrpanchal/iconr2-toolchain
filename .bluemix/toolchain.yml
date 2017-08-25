@@ -276,26 +276,20 @@ form:
       blue-green: |-
         #!/bin/bash
         echo "Blue Green Deployment"
-
-        if ! cf app \$CF_APP; then  
-          deploy
-        else
-          OLD_CF_APP=\${CF_APP}-OLD
-          rollback() {
-            set +e  
-            if cf app \$OLD_CF_APP; then
-              cf logs \$CF_APP --recent
-              cf delete \$CF_APP -f
-              cf rename \$OLD_CF_APP \$CF_APP
-            fi
-            exit 1
-          }
-          set -e
-          trap rollback ERR
-          cf rename \$CF_APP \$OLD_CF_APP
-          deploy
-          cf stop \$OLD_CF_APP
-        fi
+        cleanup() {
+          set +e  
+          echo "Deployment failed, cleaning up"
+          cf delete -f \${DHIR_NAME}-new
+          cf delete -f \${SERVER_NAME}-new
+          cf delete -f \${WORKER_NAME}-new
+          cf delete -f \${CLAMAV_NAME}-new
+          cf delete -f \${FRONTEND_NAME}-new 
+          exit 1
+        }
+        set -e
+        trap rollback ERR
+        deploy
+    
     parameters:
       server-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server'
       server-worker-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server-worker'

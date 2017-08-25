@@ -58,6 +58,21 @@ stages:
   - name: DHIR_NGINX_COUNT
     type: text
     value: ${DHIR_NGINX_COUNT}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   triggers:
   - type: stage
   jobs:
@@ -116,6 +131,21 @@ stages:
   - name: CLAMAV_COUNT
     type: text
     value: ${CLAMAV_COUNT}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   triggers:
   - type: stage
   jobs:
@@ -203,6 +233,9 @@ stages:
   - name: TZ
     type: text
     value: ${TZ}
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   - name: DHIR_NAME
     value: ${DHIR_NAME}
     type: text
@@ -349,15 +382,27 @@ stages:
   - name: ICON_DOMAIN
     type: text
     value: ${ICON_DOMAIN}
-  - name: ICON_SERVER_NAME
-    type: text
-    value: ${SERVER_NAME}
   - name: FRONTEND_MEM
     type: text
     value: ${FRONTEND_MEM}
   - name: FRONTEND_COUNT
     type: text
     value: ${FRONTEND_COUNT}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   triggers:
   - type: stage
   jobs:
@@ -447,6 +492,21 @@ stages:
   - name: CUSTOM_PHU
     type: text
     value: ${CUSTOM_PHU}
+  - name: DHIR_NAME
+    value: ${DHIR_NAME}
+    type: text
+  - name: CLAMAV_NAME
+    value: ${CLAMAV_NAME}
+    type: text
+  - name: SERVER_NAME
+    value: ${SERVER_NAME}
+    type: text
+  - name: WORKER_NAME
+    value: ${WORKER_NAME}
+    type: text
+  - name: FRONTEND_NAME
+    value: ${FRONTEND_NAME}
+    type: text
   triggers:
   - type: stage
   jobs:
