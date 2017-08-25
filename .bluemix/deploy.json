@@ -442,7 +442,7 @@
             "items": [
                 {
                     "type": "label",
-                    "title": ""
+                    "title": "Application name"
                 },
                 {
                     "type": "label",
@@ -455,9 +455,7 @@
                 
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.frontend-nginx"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
@@ -482,9 +480,7 @@
                 },
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.dhir-nginx"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
@@ -509,9 +505,7 @@
                 },
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.kibana"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
@@ -536,9 +530,7 @@
                 },
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.server"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
@@ -563,9 +555,7 @@
                 },
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.server-worker"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
@@ -590,9 +580,7 @@
                 },
                 {
                     "type": "label",
-                    "title": {
-                        "$ref": "#/messages/deploy.appName.clamav"
-                    }
+                    "title": ""
                 },
                 {
                     "type": "label",
