@@ -73,7 +73,7 @@ stages:
       echo "Creating rabbitmq service for deployment code ${JOB_NAME:0:3}"
       export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
       npm i child_process
-
+      # please add the api call for setting size for postgresql
       node scripts/one-time-setup.js compose-rabbitmq-dedicated icon-rabbitmq-${JOB_NAME:0:3} Credential1
 - name: Deploy PSQL
   inputs:
@@ -536,6 +536,9 @@ stages:
   - name: FRONTEND_NAME
     value: ${FRONTEND_NAME}
     type: text
+  - name: ROLL_BACK
+    value: ${ROLL_BACK}
+    type: text
   jobs:
   - name: Deploy
     type: deployer
@@ -552,15 +555,9 @@ stages:
         echo 'Post deployment test passed'
       else
         echo 'Post deployment test failed, deleting all deployed components'
-        set +e
-        cf delete -f ${DHIR_NAME}-new
-        cf delete -f ${SERVER_NAME}-new
-        cf delete -f ${WORKER_NAME}-new
-        cf delete -f ${CLAMAV_NAME}-new
-        cf delete -f ${FRONTEND_NAME}-new
-        cf ds -f icon-postgresql-${JOB_NAME:0:3}
-        cf ds -f icon-rabbitmq-${JOB_NAME:0:3}
-        exit 1
+        echo '$ROLL_BACK' > rollback.sh
+        chmod +x rollback.sh
+        ./rollback.sh
       fi
 - name: Blue-Green Switch
   inputs:
@@ -671,12 +668,29 @@ stages:
       application: ${CF_APP_NAME}
     script: |-
       #!/bin/bash
-      # setup deploy function
+      echo "Running final cleaning up script, this might take long"
+      # rename current to old
+      cf rename ${DHIR_NAME} ${DHIR_NAME}-old
+      cf rename ${SERVER_NAME} ${SERVER_NAME}-old
+      cf rename ${WORKER_NAME} ${WORKER_NAME}-old
+      cf rename ${CLAMAV_NAME} ${CLAMAV_NAME}-old
+      cf rename ${FRONTEND_NAME} ${FRONTEND_NAME}-old
+
+      # require script to check if there are any more jobs to be process in the rabbit mq & postgresql
+
+      # rename new to current
       cf rename ${DHIR_NAME}-new ${DHIR_NAME}
       cf rename ${SERVER_NAME}-new ${SERVER_NAME}
       cf rename ${WORKER_NAME}-new ${WORKER_NAME}
       cf rename ${CLAMAV_NAME}-new ${CLAMAV_NAME}
       cf rename ${FRONTEND_NAME}-new ${FRONTEND_NAME}
+
+      # delete the old 
+      cf delete -f ${DHIR_NAME}-old
+      cf delete -f ${SERVER_NAME}-old
+      cf delete -f ${WORKER_NAME}-old
+      cf delete -f ${CLAMAV_NAME}-old
+      cf delete -f ${FRONTEND_NAME}-old
 hooks:
 - enabled: true
   label: null
