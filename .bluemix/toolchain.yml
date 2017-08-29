@@ -210,7 +210,7 @@ services:
       name: 'icon-deploy-pipeline'
       configuration:
         content:
-          $ref: icon-deploy-pipeline.yml
+          $ref: bg-deploy-pipeline.yml
           $refType: text
         env:
           INIT_REPO: icon-r2-init-setup-repo
@@ -258,7 +258,7 @@ services:
           CUSTOM_PHU: '{{form.pipeline.parameters.customPHUs}}'
           FRONT_END_DOMAIN: '{{form.pipeline.parameters.front_end_domain}} '
           GET_CERT: '{{form.pipeline.scripts.get-cert}}'
-          BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+          ROLL_BACK: '{{form.pipeline.scripts.roll_back}}'
           VERSION: '{{form.pipeline.parameters.app_version}}'
       execute: false
 form:
@@ -275,7 +275,7 @@ form:
           fi
           set -e 
         }
-      blue-green: |-
+      roll_back: |-
         #!/bin/bash
         echo "Blue Green Deployment"
         cleanup() {
@@ -291,7 +291,28 @@ form:
         set -eE
         trap cleanup ERR
         deploy
-    
+      blue-green: |-
+        #!/bin/bash
+        echo "Blue Green Deployment"
+        if ! cf app \$CF_APP; then  
+          deploy
+        else
+          OLD_CF_APP=\${CF_APP}-OLD
+          rollback() {
+            set +e  
+            if cf app \$OLD_CF_APP; then
+              cf logs \$CF_APP --recent
+              cf delete \$CF_APP -f
+              cf rename \$OLD_CF_APP \$CF_APP
+            fi
+            exit 1
+          }
+          set -e
+          trap rollback ERR
+          cf rename \$CF_APP \$OLD_CF_APP
+          deploy
+          cf stop \$OLD_CF_APP
+        fi
     parameters:
       server-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server'
       server-worker-app-name: '{{form.pipeline.parameters.prod-space}}-icon-server-worker'
