@@ -374,6 +374,8 @@ stages:
         cf set-env ${SERVER_NAME}-new POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
         cf set-env ${SERVER_NAME}-new TZ ${TZ}
         cf set-env ${SERVER_NAME}-new SERVER_TYPE 1
+        cf set-env ${SERVER_NAME}-new POSTGRESQL_NAME icon-postgresql-${JOB_NAME:0:3}
+        cf set-env ${SERVER_NAME}-new RABBITMQ_NAME icon-rabbitmq-${JOB_NAME:0:3}
         cf bs ${SERVER_NAME}-new icon-postgresql-${JOB_NAME:0:3}
         cf bs ${SERVER_NAME}-new icon-rabbitmq-${JOB_NAME:0:3}
         if [ -f cert.pem ]
@@ -419,6 +421,8 @@ stages:
         cf set-env ${WORKER_NAME}-new POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
         cf set-env ${WORKER_NAME}-new TZ ${TZ}
         cf set-env ${WORKER_NAME}-new SERVER_TYPE 2
+        cf set-env ${WORKER_NAME}-new POSTGRESQL_NAME icon-postgresql-${JOB_NAME:0:3}
+        cf set-env ${WORKER_NAME}-new RABBITMQ_NAME icon-rabbitmq-${JOB_NAME:0:3}
         cf bs ${WORKER_NAME}-new icon-postgresql-${JOB_NAME:0:3}
         cf bs ${WORKER_NAME}-new icon-rabbitmq-${JOB_NAME:0:3}
         if [ -f cert.pem ]
