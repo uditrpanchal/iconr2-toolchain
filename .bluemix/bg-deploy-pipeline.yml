@@ -669,11 +669,14 @@ stages:
     script: |-
       #!/bin/bash
       echo "Running final cleaning up script, this might take long"
+   
       # get psql name
-      $OLD_PSQL=$(cf env ${SERVER_NAME} | sed -n '/compose-postgresql-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
+    
+      OLD_PSQL=$(cf env ${SERVER_NAME} | sed -n '/compose-postgresql-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
+      
       # get rbmq name
-      $OLD_RBMQ=$(cf env ${SERVER_NAME} | sed -n '/compose-rabbitmq-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
-
+      OLD_RBMQ=$(cf env ${SERVER_NAME} | sed -n '/compose-rabbitmq-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
+      
       # rename current to old
       cf rename ${DHIR_NAME} ${DHIR_NAME}-old
       cf rename ${SERVER_NAME} ${SERVER_NAME}-old
