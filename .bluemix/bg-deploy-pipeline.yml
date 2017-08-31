@@ -669,7 +669,7 @@ stages:
     script: |-
       #!/bin/bash
       echo "Running final cleaning up script, this might take long"
-   
+      set +e 
       # get psql name
     
       OLD_PSQL=$(cf env ${SERVER_NAME} | sed -n '/compose-postgresql-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
@@ -684,6 +684,9 @@ stages:
       cf rename ${CLAMAV_NAME} ${CLAMAV_NAME}-old
       cf rename ${FRONTEND_NAME} ${FRONTEND_NAME}-old
 
+      # prevent access to old version of ICONR2 from user
+      cf stop ${FRONTEND_NAME}-old
+
       # require script to check if there are any more jobs to be process in the rabbit mq & postgresql
 
       # rename new to current
@@ -693,6 +696,7 @@ stages:
       cf rename ${CLAMAV_NAME}-new ${CLAMAV_NAME}
       cf rename ${FRONTEND_NAME}-new ${FRONTEND_NAME}
       
+      # final clean up below
       # delete the old  app
       cf delete -f ${DHIR_NAME}-old
       cf delete -f ${SERVER_NAME}-old
