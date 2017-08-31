@@ -4,7 +4,7 @@ template:
   description: This Toolchain is for Developing ICON r2. 
   info:
     git url: '[https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2)'
-    git branch: '[test](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2/tree/test)'
+    git branch: '[test-all](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2/tree/test-all)'
 toolchain:
   name: icon2-toolchain-{{timestamp}}
 services:
