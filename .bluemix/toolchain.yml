@@ -288,6 +288,8 @@ form:
           cf delete -f \${WORKER_NAME}-new
           cf delete -f \${CLAMAV_NAME}-new
           cf delete -f \${FRONTEND_NAME}-new 
+          cf dsk -f  icon-postgresql-\${JOB_NAME:0:3} Credential1
+          cf dsk -f  icon-rabbitmq-\${JOB_NAME:0:3} Credential1
           cf ds -f icon-postgresql-\${JOB_NAME:0:3}
           cf ds -f icon-rabbitmq-\${JOB_NAME:0:3}
           exit 1
