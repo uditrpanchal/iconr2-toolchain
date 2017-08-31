@@ -4,7 +4,7 @@ stages:
   inputs:
   - service: ${SAMPLE_REPO}
     type: git
-    branch: master
+    branch: ${VERSION}
     dir_name: null
   triggers:
   - type: stage
@@ -128,6 +128,8 @@ stages:
         cf set-env $SERVER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
         cf set-env $SERVER_NAME TZ ${TZ}
         cf set-env $SERVER_NAME SERVER_TYPE 1
+        cf bs ${SERVER_NAME} icon-postgresql
+        cf bs ${SERVER_NAME} icon-rabbitmq
         if [ -f cert.pem ]
         then
           cf set-env $SERVER_NAME NODE_EXTRA_CA_CERTS cert.pem
@@ -171,6 +173,8 @@ stages:
         cf set-env $WORKER_NAME POSTGRES_READONLY_ROLE ${POSTGRES_READONLY_ROLE}
         cf set-env $WORKER_NAME TZ ${TZ}
         cf set-env $WORKER_NAME SERVER_TYPE 2
+        cf bs ${WORKER_NAME} icon-postgresql
+        cf bs ${WORKER_NAME} icon-rabbitmq
         if [ -f cert.pem ]
         then
           cf set-env $WORKER_NAME NODE_EXTRA_CA_CERTS cert.pem

@@ -93,6 +93,7 @@ services:
           FRONTEND_MEM: '{{form.pipeline.parameters.frontend_mem}}'
           FRONTEND_COUNT: '{{form.pipeline.parameters.frontend_count}}'
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+          VERSION: '{{form.pipeline.parameters.app_version}}'
       execute: false
   icon-r2-dhir-nginx-repo:
     service_id: github
@@ -196,6 +197,7 @@ services:
           BACKEND_WORKER_MEM: '{{form.pipeline.parameters.backend_worker_mem}}'
           BACKEND_WORKER_COUNT: '{{form.pipeline.parameters.backend_worker_count}}'
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
+          VERSION: '{{form.pipeline.parameters.app_version}}'
     execute: false
   icon-deploy-pipeline:
     service_id: pipeline
