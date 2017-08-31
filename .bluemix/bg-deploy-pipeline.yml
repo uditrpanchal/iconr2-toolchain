@@ -669,6 +669,11 @@ stages:
     script: |-
       #!/bin/bash
       echo "Running final cleaning up script, this might take long"
+      # get psql name
+      $OLD_PSQL=$(cf env ${SERVER_NAME} | sed -n '/compose-postgresql-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
+      # get rbmq name
+      $OLD_RBMQ=$(cf env ${SERVER_NAME} | sed -n '/compose-rabbitmq-dedicated/,/\]/ p'  | grep 'name' | cut -d ':' -f 2 | tr -d '," ')
+
       # rename current to old
       cf rename ${DHIR_NAME} ${DHIR_NAME}-old
       cf rename ${SERVER_NAME} ${SERVER_NAME}-old
@@ -684,13 +689,19 @@ stages:
       cf rename ${WORKER_NAME}-new ${WORKER_NAME}
       cf rename ${CLAMAV_NAME}-new ${CLAMAV_NAME}
       cf rename ${FRONTEND_NAME}-new ${FRONTEND_NAME}
-
-      # delete the old 
+      
+      # delete the old  app
       cf delete -f ${DHIR_NAME}-old
       cf delete -f ${SERVER_NAME}-old
       cf delete -f ${WORKER_NAME}-old
       cf delete -f ${CLAMAV_NAME}-old
       cf delete -f ${FRONTEND_NAME}-old
+
+      # delete the old services
+      cf dsk -f $OLD_PSQL Credential1
+      cf dsk -f $OLD_RBMQ Credential1
+      cf ds -f $OLD_PSQL
+      cf ds -f $OLD_RBMQ
 hooks:
 - enabled: true
   label: null
