@@ -3,15 +3,15 @@ template:
   name: ICON r2 Development Toolchain Template
   description: This Toolchain is for Developing ICON r2. 
   info:
-    git url: '[https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2)'
-    git branch: '[test-all](https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2/tree/test-all)'
+    git url: '[https://github.com/uditrpanchal/iconr2-toolchain](https://github.com/uditrpancha/iconr2-toolchain)'
+    git branch: '[test-all](https://github.com/uditrpanchal/iconr2-toolchain/tree/test-all)'
 toolchain:
   name: icon2-toolchain-{{timestamp}}
 services:
   icon-r2-init-setup-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-init-setup.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-init-setup.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -33,10 +33,10 @@ services:
           PROD_REGION_ID: '{{form.pipeline.parameters.prod-region}}'
     execute: false
   icon-r2-clamav-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
       repo_name: '{{toolchain.name}}'
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-clamav.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-clamav.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -62,9 +62,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-frontend-nginx-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-frontend-nginx.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-frontend-nginx.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -96,9 +96,9 @@ services:
           VERSION: '{{form.pipeline.parameters.app_version}}'
       execute: false
   icon-r2-dhir-nginx-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-dhir-nginx.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-dhir-nginx.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -125,9 +125,9 @@ services:
           BACKEND_ENV: '{{form.pipeline.parameters.backend_env}}'
       execute: false
   icon-r2-kibana-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-kibana.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-kibana.git'
       type: link
       has_issues: false
       enable_traceability: false
@@ -154,9 +154,9 @@ services:
           BLUE_GREEN: '{{form.pipeline.scripts.blue-green}}'
       execute: false
   icon-r2-server-repo:
-    service_id: github
+    service_id: githubpublic
     parameters:
-      repo_url: 'https://github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2-backend.git'
+      repo_url: 'https://github.com/MOHLTC11/icon-r2-backend.git'
       type: link
       has_issues: false
       enable_traceability: false
