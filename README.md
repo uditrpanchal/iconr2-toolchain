@@ -20,7 +20,13 @@ Follow the steps below to construct a url that will get you to create a toolchai
 
     1. Replace the section <personal_access_token> in the below url with your token.
 
+    BMX-D
+
     https://console.ehealthontario.ca-east.bluemix.net/devops/setup/deploy/?repository=https%3A//<personal_access_token>@github.ehealthontario.ca-east.bluemix.net/ICONR2/icon-r2
+ 
+    BMX-P
+
+    https://console.ng.bluemix.net/devops/setup/deploy/?repository=https%3A//github.com/uditrpanchal/iconr2-toolchain
 
     2. open your browser and copy/paste the constructed url into the address. 
 
