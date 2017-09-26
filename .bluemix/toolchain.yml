@@ -3,8 +3,8 @@ template:
   name: ICON r2 Development Toolchain Template
   description: This Toolchain is for Developing ICON r2.  Each deployment is tagged.
   info:
-    git url: '[https://github.com/Shifeng-ON/icon-deploy-two-domain](https://github.com/Shifeng-ON/icon-r2)'
-    git branch: '[master](https://github.com/Shifeng-ON/icon-r2/tree/master)'
+    git url: '[https://github.com/uditrpanchal/iconr2-toolchain](https://github.com/uditrpanchal/iconr2-toolchain)'
+    git branch: '[master](https://github.com/uditrpanchal/iconr2-toolchain/tree/master)'
 toolchain:
   name: icon2-dev-toolchain-{{timestamp}}
 services:
