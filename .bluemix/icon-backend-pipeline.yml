@@ -110,7 +110,7 @@ stages:
       deploy(){
         source getcert.sh
         getcert
-        cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml --no-start
+        cf push ${CF_APP} -d ${ICON_DOMAIN} -n ${CF_APP} -f bluemix/base-main-manifest.yml -b https://github.com/cloudfoundry/nodejs-buildpack#v1.6.6 --no-start
         # Prepare configuration\
         # GET CLAMAV endpoint
         CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
@@ -156,7 +156,7 @@ stages:
       deploy(){
         source getcert.sh
         getcert
-        cf push ${CF_APP} -f bluemix/base-worker-manifest.yml  --no-start
+        cf push ${CF_APP} -f bluemix/base-worker-manifest.yml -b https://github.com/cloudfoundry/nodejs-buildpack#v1.6.6 --no-start
         # GET CLAMAV endpoint
         CLAMAV_ENDPOINT=https://${CLAMAV_NAME}.${ICON_DOMAIN}/scan
         # GET DHIR NGINX ENDPOINT
